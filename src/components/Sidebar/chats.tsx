@@ -55,6 +55,7 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
+  AvatarBadge,
 } from "@chakra-ui/react";
 import { chatDefault } from "../../utils/chatDefault";
 type chatsProps = {
@@ -62,9 +63,16 @@ type chatsProps = {
   Name?: string;
   lastMessage?: string;
   time?: string;
+  isOnline?: boolean;
 };
 
-const Chats: React.FC<chatsProps> = ({ PhotoURL, Name, lastMessage, time }) => {
+const Chats: React.FC<chatsProps> = ({
+  PhotoURL,
+  Name,
+  lastMessage,
+  time,
+  isOnline,
+}) => {
   const _Message = lastMessage ? lastMessage : chatDefault.lastMessage;
   const Message =
     _Message.length > 50 ? _Message.slice(0, 50) + "..." : _Message;
@@ -72,10 +80,12 @@ const Chats: React.FC<chatsProps> = ({ PhotoURL, Name, lastMessage, time }) => {
   const _Name = Name ? Name : chatDefault.Name;
   const Name_ = _Name.length > 20 ? _Name.slice(0, 20) + "..." : _Name;
 
+  const _isOnline = isOnline ? isOnline : chatDefault.isOnline;
 
   return (
     <Grid
-      bg={useColorModeValue("gray.200", "gray.900")}
+      cursor={"pointer"}
+      bg={"gray.900"}
       templateColumns="1fr 6fr 1fr"
       gap={4}
       p={5}
@@ -84,30 +94,25 @@ const Chats: React.FC<chatsProps> = ({ PhotoURL, Name, lastMessage, time }) => {
       <Avatar
         borderRadius="full"
         boxSize="4rem"
-        src={PhotoURL ? PhotoURL : chatDefault.PhotoURL}
-      />
+        src={PhotoURL ? PhotoURL : chatDefault.PhotoURL}>
+        <AvatarBadge
+          boxSize="1.25em"
+          bg={_isOnline ? "green.500" : "gray.500"}
+        />
+      </Avatar>
       <Flex
         alignItems="left"
         justifyContent="left"
         flexDir={"column"}
         w={"full"}>
-        <Text
-          fontSize={"xl"}
-          fontWeight={"bold"}
-          color={useColorModeValue("gray.700", "gray.200")}>
+        <Text fontSize={"xl"} fontWeight={"bold"} color={"gray.200"}>
           {Name_}
         </Text>
-        <Text
-          fontSize={"md"}
-          fontWeight={"normal"}
-          color={useColorModeValue("gray.700", "gray.200")}>
+        <Text fontSize={"md"} fontWeight={"normal"} color={"gray.200"}>
           {Message}
         </Text>
       </Flex>
-      <Text
-        fontSize={"md"}
-        fontWeight={"normal"}
-        color={useColorModeValue("gray.700", "gray.200")}>
+      <Text fontSize={"md"} fontWeight={"normal"} color={"gray.200"}>
         {time ? time : "18/12/2022"}
       </Text>
     </Grid>

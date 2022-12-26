@@ -5,5 +5,5 @@ export const chatDefault = {
   lastMessage:
     "Hello, I am Lionel Messi and I give you a warm welcome to my chat room.",
   Time: "12:00",
-  Status: "online",
+  isOnline: true,
 };

@@ -15,6 +15,7 @@ const BlockIcons: React.FC<blockIconsProps> = () => {
       flexDir={"row"}>
       <IconButton
         aria-label="story"
+        colorScheme={"red"}
         icon={<ImSpinner10 />}
         fontSize="2xl"
         variant="ghost"
@@ -22,6 +23,7 @@ const BlockIcons: React.FC<blockIconsProps> = () => {
       />
       <IconButton
         aria-label="new message"
+        colorScheme={"red"}
         icon={<HiPencilSquare />}
         fontSize="2xl"
         variant="ghost"
@@ -29,6 +31,7 @@ const BlockIcons: React.FC<blockIconsProps> = () => {
       />
       <IconButton
         aria-label="Menu"
+        colorScheme={"red"}
         icon={<HiOutlineDotsVertical />}
         fontSize="2xl"
         variant="ghost"

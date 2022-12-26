@@ -9,11 +9,9 @@ import Chats from "./chats";
 const Sidebar: React.FC = () => {
   return (
     <Box
-      bg={useColorModeValue("blackAlpha.200", "blackAlpha.700")}
+      bg={"blackAlpha.900"}
       borderRight="4px"
-      borderRightColor={useColorModeValue("blackAlpha.400", "gray.700")}
-      w={{ base: "full", md: "25%" }}
-      pos="fixed"
+      borderRightColor={"red.300"}
       h="full"
       overflow={"auto"}>
       <Flex
@@ -22,11 +20,7 @@ const Sidebar: React.FC = () => {
         justifyContent="space-between"
         gap={5}
         flexDir={"row"}>
-        <Avatar
-          borderRadius="full"
-          boxSize="4rem"
-          src={useColorModeValue(logos.dark, logos.light)}
-        />
+        <Avatar borderRadius="full" boxSize="4rem" src={logos.light} />
         <BlockIcons />
       </Flex>
       <SearchBar />

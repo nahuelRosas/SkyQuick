@@ -1,6 +1,13 @@
-import { Flex, IconButton, Input, InputGroup, InputRightElement, useColorModeValue } from '@chakra-ui/react';
-import React from 'react';
-import { HiOutlineSearch } from 'react-icons/hi';
+import {
+  Flex,
+  IconButton,
+  Input,
+  InputGroup,
+  InputRightElement,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import React from "react";
+import { HiOutlineSearch } from "react-icons/hi";
 
 const SearchBar: React.FC = () => {
   return (
@@ -13,15 +20,17 @@ const SearchBar: React.FC = () => {
       <InputGroup>
         <Input
           placeholder="Search"
-          bg={useColorModeValue("blackAlpha.200", "gray.900")}
-          color={useColorModeValue("blackAlpha.700", "gray.50")}
+          bg={"gray.900"}
+          color={"gray.50"}
           borderRadius="full"
-          _placeholder={{ color: "gray.150" }}
+          _placeholder={{ color: "red.300" }}
         />
         <InputRightElement>
           <IconButton
+            colorScheme={"red"}
             aria-label="search"
             icon={<HiOutlineSearch />}
+            fontSize="2xl"
             variant="ghost"
             isRound
           />

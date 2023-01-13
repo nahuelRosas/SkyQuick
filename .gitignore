@@ -68,6 +68,7 @@ node_modules/
 /.pnp
 .pnp.js
 package-lock.json
+node_modules
 
 # testing
 /coverage
@@ -94,8 +95,8 @@ yarn-error.log*
 
 # vercel
 .vercel
+.next
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-

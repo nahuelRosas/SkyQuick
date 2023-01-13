@@ -8,7 +8,7 @@ import {
   Grid,
 } from "@chakra-ui/react";
 import React from "react";
-import { chatDefault } from "../../utils/chatDefault";
+import { chatDefault } from "../../../utils/chatDefault";
 import { IconButton } from "@chakra-ui/react";
 import { HiOutlineVideoCamera } from "react-icons/hi2";
 import { HiOutlineDotsVertical, HiOutlineSearch } from "react-icons/hi";

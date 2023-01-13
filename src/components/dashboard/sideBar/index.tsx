@@ -1,7 +1,7 @@
 import { Avatar, Box, Flex, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 
-import { logos } from "../../utils/logos";
+import { logos } from "../../../utils/logos";
 import BlockIcons from "./blockIcons";
 import SearchBar from "./searchBar";
 import Chats from "./chats";

@@ -57,7 +57,7 @@ import {
   MenuList,
   AvatarBadge,
 } from "@chakra-ui/react";
-import { chatDefault } from "../../utils/chatDefault";
+import { chatDefault } from "../../../utils/chatDefault";
 type chatsProps = {
   PhotoURL?: string;
   Name?: string;

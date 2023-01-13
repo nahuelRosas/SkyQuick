@@ -12,7 +12,7 @@ import {
   HiOutlineVideoCamera,
   HiOutlineDotsVertical,
 } from "react-icons/hi";
-import { chatDefault } from "../../utils/chatDefault";
+import { chatDefault } from "../../../utils/chatDefault";
 
 type HeadProps = {
   PhotoURL?: string;

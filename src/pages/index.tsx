@@ -1,10 +1,51 @@
-import { Container, useColorModeValue, Flex, Grid } from "@chakra-ui/react";
-import Head from "next/head";
-import Sidebar from "../components/Sidebar";
-import { logos } from "../utils/logos";
-import Chat from "../components/Chat";
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { useCallback, useEffect } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useRecoilState } from 'recoil';
 
-export default function Home() {
+import { sessionState } from '../atoms/sessionStateAtom';
+import Spinner from '../components/spinner';
+import { auth } from '../firebase/clientApp';
+import { logos } from '../utils/logos';
+
+const Home: React.FC = () => {
+  const router = useRouter();
+  const [value, setValue] = useRecoilState(sessionState);
+  const [user] = useAuthState(auth);
+  const CheckAuth = useCallback(async () => {
+    if (value.state === false && !user) {
+      router.push("/authenticate");
+    } else if (!value.state && user) {
+      setValue({
+        state: true,
+        user: {
+          email: user.email,
+          name: user.displayName,
+          photoURL: user.photoURL,
+        },
+        timeStarted: Date.now(),
+      });
+    } else if (!user) {
+      setTimeout(() => {
+        if (!user)
+          setValue({
+            state: false,
+            user: {
+              email: null,
+              name: null,
+              photoURL: null,
+            },
+            timeStarted: undefined,
+          });
+      }, 3000);
+    }
+  }, [value, user]);
+
+  useEffect(() => {
+    CheckAuth();
+  }, [CheckAuth]);
+
   return (
     <>
       <Head>
@@ -13,14 +54,9 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href={logos.light} />
       </Head>
-      <Container maxW="100%" h="100vh" bg={"blackAlpha.900"}>
-        <Container maxW="95%" h="100vh" bg={"blackAlpha.100"} minH="100vh">
-          <Grid templateColumns={{ base: "1fr", md: "25% 75%" }} h="100vh">
-            <Sidebar />
-            <Chat />
-          </Grid>
-        </Container>
-      </Container>
+      <Spinner />
     </>
   );
-}
+};
+
+export default Home;

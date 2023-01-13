@@ -1,13 +1,14 @@
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import {
+  Flex,
   IconButton,
   Input,
   InputGroup,
   InputRightElement,
   Text,
-  Flex,
 } from "@chakra-ui/react";
 import React from "react";
+
 import ErrorLens from "./errorLens";
 
 const InputAuth = ({

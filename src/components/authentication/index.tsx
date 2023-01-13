@@ -1,16 +1,16 @@
-import { Flex, Text } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { useRecoilValue } from 'recoil';
+import { Flex, Text } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useRecoilValue } from "recoil";
 
-import { authModalAtom } from '../../atoms/authModalAtom';
-import { sessionState } from '../../atoms/sessionStateAtom';
-import { auth } from '../../firebase/clientApp';
-import Create from './create';
-import OAuthButtons from './OAuthButtons';
-import ResetPassword from './resetPassword';
-import Sign from './sign';
+import { authModalAtom } from "../../atoms/authModalAtom";
+import { sessionState } from "../../atoms/sessionStateAtom";
+import { auth } from "../../firebase/clientApp";
+import Create from "./create";
+import OAuthButtons from "./OAuthButtons";
+import ResetPassword from "./resetPassword";
+import Sign from "./sign";
 
 const Auth: React.FC = () => {
   const { type } = useRecoilValue(authModalAtom);

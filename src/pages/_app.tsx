@@ -10,9 +10,9 @@ export default function App({ Component, pageProps }: AppProps) {
       <RecoilRoot>
         <ChakraProvider>
           <Component {...pageProps} />
+          <Analytics />
         </ChakraProvider>
       </RecoilRoot>
-      <Analytics />
     </>
   );
 }

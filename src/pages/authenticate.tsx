@@ -1,7 +1,8 @@
 import { Container, Grid, Image } from "@chakra-ui/react";
 import Head from "next/head";
 import React from "react";
-import Auth from "../components/authentication";
+
+import Auth from "../components/authentication/AuthUI";
 import { logos } from "../utils/logos";
 
 const Authenticate: React.FC = () => {

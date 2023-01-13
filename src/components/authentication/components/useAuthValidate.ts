@@ -1,19 +1,20 @@
-import { useToast } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useState } from "react";
+import { useToast } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
+  useAuthState,
   useCreateUserWithEmailAndPassword,
   useSendEmailVerification,
   useSendPasswordResetEmail,
   useSignInWithEmailAndPassword,
   useSignInWithGoogle,
   useSignOut,
-} from "react-firebase-hooks/auth";
-import { useSetRecoilState } from "recoil";
+} from 'react-firebase-hooks/auth';
+import { useSetRecoilState } from 'recoil';
 
-import { authModalAtom } from "../../../atoms/authModalAtom";
-import { sessionState } from "../../../atoms/sessionStateAtom";
-import { auth } from "../../../firebase/clientApp";
-import { FIREBASE_ERRORS } from "../../../firebase/errors";
+import { authModalAtom } from '../../../atoms/authModalAtom';
+import { auth } from '../../../firebase/clientApp';
+import { FIREBASE_ERRORS } from '../../../firebase/errors';
 import {
   emailRegex,
   lowerCaseRegex,
@@ -21,12 +22,27 @@ import {
   numberRegex,
   specialCharRegex,
   upperCaseRegex,
-} from "../../../utils/regex";
+} from '../../../utils/regex';
 
 export const useAuthValidate = (
-  type: "sign" | "create" | "resetPassword" | "AuthButtons"
+  type?: "sign" | "create" | "resetPassword" | "AuthButtons"
 ) => {
   const toast = useToast();
+  const router = useRouter();
+  const [AuthState] = useAuthState(auth);
+  const [URL, SetURL] = useState<{
+    home: string;
+    auth: string;
+  }>({ home: "/", auth: "/authenticate" });
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const setAuthModalState = useSetRecoilState(authModalAtom);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   //!---------------- REACT FIREBASE HOOKS ----------------//
   const [functionSign, userSign, loadingSign, errorSign] =
     useSignInWithEmailAndPassword(auth);
@@ -43,18 +59,10 @@ export const useAuthValidate = (
     errorSignGoogle,
   ] = useSignInWithGoogle(auth);
   //!---------------- CHANGE MODAL STATE ----------------//
-  const setAuthModalState = useSetRecoilState(authModalAtom);
   const changeModalState = (subType: "login" | "signUp" | "resetPassword") => {
     setAuthModalState((prevState) => ({ ...prevState, type: subType }));
   };
   //!---------------- CHANGE FORM USERDATA ----------------//
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const onChangeShow = (type: "password" | "confirmPassword") => {
     if (type === "password") {
       setShowPassword((prevState) => !prevState);
@@ -334,6 +342,7 @@ export const useAuthValidate = (
     if (type === "resetPassword") return loadingResetPassword;
     if (type === "sign") return loadingSign;
   };
+
   //!---------------- SUBMIT FORM ----------------//
   const onSubmitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -409,42 +418,36 @@ export const useAuthValidate = (
       });
   };
   //!----------------VERIFY AUTH ----------------//
-  const setSession = useSetRecoilState(sessionState);
-  const verifyAuth = useCallback(async () => {
-    const Auth = userSign || userCreate || userSignGoogle;
-    if (
-      type !== "create" &&
-      Auth?.operationType === "signIn" &&
-      Auth.user.emailVerified
-    ) {
-      toast({
-        title: "Welcome back!",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      setSession({
-        state: true,
-        user: {
-          name: Auth.user.displayName,
-          email: Auth.user.email,
-          photoURL: Auth.user.photoURL,
-        },
-        timeStarted: Date.now(),
-      });
+
+  const CheckUserCredential = useCallback(async () => {
+    if (!AuthState && router.pathname !== URL.auth) {
+      setTimeout(async () => {
+        if (!AuthState && router.pathname !== URL.auth) {
+          toast({
+            title: "Error",
+            description: "You need to be logged in to access this page",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+          await router.push(URL.auth);
+        }
+      }, 2000);
     }
-  }, [userSign, userCreate, userSignGoogle]);
+  }, [AuthState, router]);
+
   useEffect(() => {
-    verifyAuth();
-  }, [userCreate, userSign, userSignGoogle]);
+    CheckUserCredential();
+  }, [AuthState, router]);
 
+  const reDirectWithoutSession = (URL: string, type: "home" | "auth") => {
+    SetURL((prev) => ({ ...prev, [type]: URL }));
+  };
   //!---------------- SOCIAL MEDIA  ----------------//
-
   const returnErrorSocialMedia =
     (FIREBASE_ERRORS[
       errorSignGoogle?.message as keyof typeof FIREBASE_ERRORS
     ] as string) || "An error occurred";
-
   const SignWithGoogle = {
     onClick: () => {
       functionSignGoogle();
@@ -459,6 +462,7 @@ export const useAuthValidate = (
       return errorSignGoogle ? true : false;
     },
   };
+
   return {
     changeModalState,
     onChangeShow,
@@ -472,5 +476,6 @@ export const useAuthValidate = (
     returnLoadingState,
     onSubmitForm,
     SignWithGoogle,
+    reDirectWithoutSession,
   };
 };

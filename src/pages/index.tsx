@@ -1,51 +1,10 @@
-import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { useCallback, useEffect } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { useRecoilState } from 'recoil';
+import Head from "next/head";
+import React from "react";
 
-import { sessionState } from '../atoms/sessionStateAtom';
-import Spinner from '../components/spinner';
-import { auth } from '../firebase/clientApp';
-import { logos } from '../utils/logos';
+import Dashboard from "../components/dashboard";
+import { logos } from "../utils/logos";
 
 const Home: React.FC = () => {
-  const router = useRouter();
-  const [value, setValue] = useRecoilState(sessionState);
-  const [user] = useAuthState(auth);
-  const CheckAuth = useCallback(async () => {
-    if (value.state === false && !user) {
-      router.push("/authenticate");
-    } else if (!value.state && user) {
-      setValue({
-        state: true,
-        user: {
-          email: user.email,
-          name: user.displayName,
-          photoURL: user.photoURL,
-        },
-        timeStarted: Date.now(),
-      });
-    } else if (!user) {
-      setTimeout(() => {
-        if (!user)
-          setValue({
-            state: false,
-            user: {
-              email: null,
-              name: null,
-              photoURL: null,
-            },
-            timeStarted: undefined,
-          });
-      }, 3000);
-    }
-  }, [value, user]);
-
-  useEffect(() => {
-    CheckAuth();
-  }, [CheckAuth]);
-
   return (
     <>
       <Head>
@@ -54,7 +13,7 @@ const Home: React.FC = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href={logos.light} />
       </Head>
-      <Spinner />
+      <Dashboard />
     </>
   );
 };

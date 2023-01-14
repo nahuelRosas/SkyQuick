@@ -1,20 +1,8 @@
-import {
-  useColorModeValue,
-  Flex,
-  Avatar,
-  Text,
-  Box,
-  AvatarBadge,
-  Grid,
-} from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import React from "react";
-import { chatDefault } from "../../../utils/chatDefault";
-import { IconButton } from "@chakra-ui/react";
-import { HiOutlineVideoCamera } from "react-icons/hi2";
-import { HiOutlineDotsVertical, HiOutlineSearch } from "react-icons/hi";
-import Head from "./head";
-import Body from "./body";
-import Footer from "./footer";
+import { useRecoilState } from "recoil";
+
+import { currentChatAtom } from "../../../atoms/currentChat";
 
 type indexProps = {
   PhotoURL?: string;
@@ -24,11 +12,13 @@ type indexProps = {
 };
 
 const Index: React.FC<indexProps> = ({ PhotoURL, Name, time, isOnline }) => {
+  const [chat, setChat] = useRecoilState(currentChatAtom);
+
   return (
     <Flex bg={"gray.900"} h="full" w="full" flexDir="column" overflow={"auto"}>
-      <Head />
+      {/* <Head />
       <Body />
-      <Footer />
+      <Footer /> */}
     </Flex>
   );
 };

@@ -1,6 +1,6 @@
 import { Avatar, Flex, Grid, Text } from "@chakra-ui/react";
 
-const HitsComponent = ({
+const Contact = ({
   hit,
 }: {
   hit: {
@@ -39,4 +39,4 @@ const HitsComponent = ({
   );
 };
 
-export default HitsComponent;
+export default Contact;

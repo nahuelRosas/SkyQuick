@@ -1,18 +1,9 @@
-import {
-  Flex,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-} from "@chakra-ui/react";
-import React from "react";
-import { useSignOut } from "react-firebase-hooks/auth";
-import { HiOutlineDotsVertical } from "react-icons/hi";
-import { HiPencilSquare } from "react-icons/hi2";
-import { ImSpinner10 } from "react-icons/im";
+import { Flex, IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
+import React from 'react';
+import { useSignOut } from 'react-firebase-hooks/auth';
+import { HiOutlineDotsVertical } from 'react-icons/hi';
 
-import { auth } from "../../../firebase/clientApp";
+import { auth } from '../../../../firebase/clientApp';
 
 type blockIconsProps = {};
 

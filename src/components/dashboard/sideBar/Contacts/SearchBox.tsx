@@ -5,42 +5,60 @@ import {
   InputGroup,
   InputRightElement,
 } from "@chakra-ui/react";
-import React from "react";
-import { connectSearchBox } from "react-instantsearch-dom";
+import React, { useEffect, useState } from "react";
 import { HiOutlineSearch, HiX } from "react-icons/hi";
+import { connectSearchBox } from "react-instantsearch-dom";
+import { useSetRecoilState } from "recoil";
+
+import { searchQueryState } from "../../../../atoms/searchQueryState";
 
 const SearchBoxUI = ({
-  currentRefinement,
-  isSearchStalled,
   refine,
+  isSearchStalled,
 }: {
   currentRefinement: string;
   isSearchStalled: boolean;
   refine: Function;
 }) => {
+  const [query, setQuery] = useState("");
+  const setValue = useSetRecoilState(searchQueryState);
+  useEffect(() => {
+    setValue({ query: query, state: false, loading: true });
+    const timeOutId = setTimeout(() => {
+      refine(query);
+      setValue({ query: query, state: true, loading: false });
+      return;
+    }, 1000);
+    return () => clearTimeout(timeOutId);
+  }, [query]);
+
   return (
     <Flex
       alignItems="center"
       justifyContent="space-between"
       flexDir={"row"}
-      w={"95%"}>
+      w={"100%"}>
       <InputGroup>
         <Input
           placeholder="Search..."
           bg={"gray.900"}
           color={"gray.300"}
           borderRadius="full"
-          value={currentRefinement}
-          onChange={(event) => refine(event.currentTarget.value)}
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
           _placeholder={{ color: "gray.500" }}
         />
         <InputRightElement>
           <IconButton
             colorScheme={"cyan"}
             aria-label="search"
-            icon={currentRefinement.length > 0 ? <HiX /> : <HiOutlineSearch />}
+            icon={query.length > 0 ? <HiX /> : <HiOutlineSearch />}
             onClick={() => {
-              if (currentRefinement.length > 0) return refine("");
+              if (query.length > 0) {
+                setValue({ query: "", state: false, loading: false });
+                setQuery("");
+                return;
+              }
             }}
             _active={{ bg: "transparent" }}
             _focus={{ bg: "transparent" }}

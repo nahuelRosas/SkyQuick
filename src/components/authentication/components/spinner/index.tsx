@@ -1,5 +1,6 @@
-import React from "react";
-import { Spinner, Container, Center } from "@chakra-ui/react";
+import { Center, Spinner } from '@chakra-ui/react';
+import React from 'react';
+
 type indexProps = {};
 
 const index: React.FC<indexProps> = () => {

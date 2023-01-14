@@ -1,12 +1,21 @@
-import { Avatar, Box, Flex, useColorModeValue } from "@chakra-ui/react";
+import { Avatar, Box, Flex, Grid, Text } from "@chakra-ui/react";
+import algoliasearch from "algoliasearch/lite";
 import React from "react";
+import { Hits, InstantSearch } from "react-instantsearch-dom";
+import { useRecoilValue } from "recoil";
 
-import { logos } from "../../../utils/logos";
+import { sessionAtom } from "../../authentication/atomsAuth/sessionAtom";
 import BlockIcons from "./blockIcons";
-import SearchBar from "./searchBar";
-import Chats from "./chats";
+import HitsComponent from "./HitsComponent";
+import SearchBox from "./SearchBox";
 
 const Sidebar: React.FC = () => {
+  const { user } = useRecoilValue(sessionAtom);
+  const searchClient = algoliasearch(
+    "5CYQ8ZVRBS",
+    "2cddb4410d40e8074a5ade6394fec72a"
+  );
+
   return (
     <Box
       bg={"blackAlpha.900"}
@@ -20,11 +29,15 @@ const Sidebar: React.FC = () => {
         justifyContent="space-between"
         gap={5}
         flexDir={"row"}>
-        <Avatar borderRadius="full" boxSize="4rem" src={logos.light} />
+        <Avatar borderRadius="full" boxSize="3rem" src={user?.photoURL} />
         <BlockIcons />
       </Flex>
-      <SearchBar />
-      <Chats />
+      <Flex direction="column" gap={4} alignItems={"center"}>
+        <InstantSearch searchClient={searchClient} indexName={"prod_Users"}>
+          <SearchBox />
+          <Hits hitComponent={HitsComponent} />
+        </InstantSearch>
+      </Flex>
     </Box>
   );
 };

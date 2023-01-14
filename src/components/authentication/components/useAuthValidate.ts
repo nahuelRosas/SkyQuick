@@ -1,6 +1,7 @@
-import { useToast } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useToast } from "@chakra-ui/react";
+import { doc } from "firebase/firestore";
+import { useRouter } from "next/router";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   useAuthState,
   useCreateUserWithEmailAndPassword,
@@ -9,12 +10,14 @@ import {
   useSignInWithEmailAndPassword,
   useSignInWithGoogle,
   useSignOut,
-} from 'react-firebase-hooks/auth';
-import { useSetRecoilState } from 'recoil';
+} from "react-firebase-hooks/auth";
+import { useDocumentData } from "react-firebase-hooks/firestore";
+import { useSetRecoilState } from "recoil";
 
-import { authModalAtom } from '../../../atoms/authModalAtom';
-import { auth } from '../../../firebase/clientApp';
-import { FIREBASE_ERRORS } from '../../../firebase/errors';
+import { authModalAtom } from "../atomsAuth/authModalAtom";
+import { sessionAtom } from "../atomsAuth/sessionAtom";
+import { auth, firestore } from "../../../firebase/clientApp";
+import { FIREBASE_ERRORS } from "../../../firebase/errors";
 import {
   emailRegex,
   lowerCaseRegex,
@@ -22,14 +25,15 @@ import {
   numberRegex,
   specialCharRegex,
   upperCaseRegex,
-} from '../../../utils/regex';
+} from "../../../utils/regex";
+import Auth from "../AuthUI";
 
 export const useAuthValidate = (
   type?: "sign" | "create" | "resetPassword" | "AuthButtons"
 ) => {
   const toast = useToast();
   const router = useRouter();
-  const [AuthState] = useAuthState(auth);
+  const [AuthState, loadingAuth] = useAuthState(auth);
   const [URL, SetURL] = useState<{
     home: string;
     auth: string;
@@ -40,6 +44,8 @@ export const useAuthValidate = (
     confirmPassword: "",
   });
   const setAuthModalState = useSetRecoilState(authModalAtom);
+  const setSessionState = useSetRecoilState(sessionAtom);
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -393,52 +399,41 @@ export const useAuthValidate = (
         }
       );
     if (type === "sign")
-      return await functionSign(form.email, form.password).then(async (res) => {
-        if (res && !res.user.emailVerified) {
-          SetError({
-            type: "otherErrors",
-            error:
-              "You must first verify your account. We sent you a new email",
-            withOutPreset: true,
-          });
+      return await functionSign(form.email, form.password)
+        .then(async (res) => {
+          if (res && !res.user.emailVerified) {
+            SetError({
+              type: "otherErrors",
+              error:
+                "You must first verify your account. We sent you a new email",
+              withOutPreset: true,
+            });
+            toast({
+              title: "Error",
+              description: "You need to verify your account first",
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+            });
+            setTimeout(() => {
+              SetError({ type: "otherErrors", blank: true });
+            }, 5000);
+            await functionEmailVerification();
+            await functionSignOut();
+            return;
+          }
+        })
+        .catch((error) => {
           toast({
             title: "Error",
-            description: "You need to verify your account first",
+            description:
+              FIREBASE_ERRORS[error.message as keyof typeof FIREBASE_ERRORS],
             status: "error",
             duration: 5000,
             isClosable: true,
           });
-          setTimeout(() => {
-            SetError({ type: "otherErrors", blank: true });
-          }, 5000);
-          await functionEmailVerification();
-          await functionSignOut();
-          return;
-        }
-      });
+        });
   };
-  //!----------------VERIFY AUTH ----------------//
-
-  const CheckUserCredential = useCallback(async () => {
-    if (!AuthState && router.pathname !== URL.auth) {
-      setTimeout(async () => {
-        if (!AuthState && router.pathname !== URL.auth) {
-          toast({
-            title: "Error",
-            description: "You need to be logged in to access this page",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          });
-          await router.push(URL.auth);
-        }
-      }, 2000);
-    }
-  }, [AuthState, router]);
-
-  useEffect(() => {
-    CheckUserCredential();
-  }, [AuthState, router]);
 
   const reDirectWithoutSession = (URL: string, type: "home" | "auth") => {
     SetURL((prev) => ({ ...prev, [type]: URL }));

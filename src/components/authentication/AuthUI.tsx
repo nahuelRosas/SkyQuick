@@ -2,7 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import React from "react";
 import { useRecoilValue } from "recoil";
 
-import { authModalAtom } from "../../atoms/authModalAtom";
+import { authModalAtom } from "./atomsAuth/authModalAtom";
 import Create from "./create";
 import OAuthButtons from "./OAuthButtons";
 import ResetPassword from "./resetPassword";

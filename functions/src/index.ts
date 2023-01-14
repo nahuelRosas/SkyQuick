@@ -28,7 +28,7 @@ export const createUser = functions.auth.user().onCreate(async (user) => {
   }
 
   const {secure_url} = await Cloudinary.uploader.upload(photoURL as string, {
-    folder: "users",
+    folder: "Avatar",
     public_id: uid,
     overwrite: true,
     invalidate: true,
@@ -48,5 +48,5 @@ export const createUser = functions.auth.user().onCreate(async (user) => {
     providerData,
   };
   await userRef.set(userObj);
-  logger.info("User created 🎉");
+  logger.info("User created 🥳");
 });

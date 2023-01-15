@@ -1,12 +1,15 @@
-import { doc } from "firebase/firestore";
+import { collection, doc } from "firebase/firestore";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useDocumentData } from "react-firebase-hooks/firestore";
+import {
+  useCollectionData,
+  useDocumentData,
+} from "react-firebase-hooks/firestore";
 import { useSetRecoilState } from "recoil";
 
-import { sessionAtom } from "./atomsAuth/sessionAtom";
 import { auth, firestore } from "../../firebase/clientApp";
+import { sessionAtom } from "./atomsAuth/sessionAtom";
 import Spinner from "./components/spinner";
 
 type AuthRootProps = {
@@ -19,12 +22,21 @@ const AuthRoot: React.FC<AuthRootProps> = (props: AuthRootProps) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const recoverRef = () => {
+  const recoverRefUser = () => {
     if (AuthState && AuthState.uid)
       return doc(firestore, "users", AuthState.uid);
+
     return null;
   };
-  const [userData, loadingData] = useDocumentData(recoverRef());
+  const [userData, loadingData] = useDocumentData(recoverRefUser());
+  const recoverRefFollowing = () => {
+    if (AuthState && AuthState.uid)
+      return collection(firestore, "users", AuthState.uid, "following");
+    return null;
+  };
+  const [followingData, loadingFollowingData] = useCollectionData(
+    recoverRefFollowing()
+  );
 
   useEffect(() => {
     if (!AuthState && router.pathname !== "/authenticate" && !loadingState) {
@@ -46,7 +58,7 @@ const AuthRoot: React.FC<AuthRootProps> = (props: AuthRootProps) => {
       router.pathname !== "/authenticate" &&
       !loadingState
     ) {
-      if (userData && !loadingData) {
+      if (userData && !loadingData && !loadingFollowingData) {
         setLoading(false);
         setSession({
           user: {
@@ -58,6 +70,7 @@ const AuthRoot: React.FC<AuthRootProps> = (props: AuthRootProps) => {
             createdAt: userData.createdAt,
             providerData: AuthState.providerData,
             updatedAt: userData.updatedAt,
+            following: followingData,
           },
         });
       }

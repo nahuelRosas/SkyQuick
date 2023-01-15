@@ -1,5 +1,4 @@
 import { useToast } from "@chakra-ui/react";
-import { doc } from "firebase/firestore";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
@@ -11,12 +10,9 @@ import {
   useSignInWithGoogle,
   useSignOut,
 } from "react-firebase-hooks/auth";
-import { useDocumentData } from "react-firebase-hooks/firestore";
 import { useSetRecoilState } from "recoil";
 
-import { authModalAtom } from "../atomsAuth/authModalAtom";
-import { sessionAtom } from "../atomsAuth/sessionAtom";
-import { auth, firestore } from "../../../firebase/clientApp";
+import { auth } from "../../../firebase/clientApp";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
 import {
   emailRegex,
@@ -26,18 +22,14 @@ import {
   specialCharRegex,
   upperCaseRegex,
 } from "../../../utils/regex";
-import Auth from "../AuthUI";
+import { authModalAtom } from "../atomsAuth/authModalAtom";
+import { sessionAtom } from "../atomsAuth/sessionAtom";
 
 export const useAuthValidate = (
   type?: "sign" | "create" | "resetPassword" | "AuthButtons"
 ) => {
   const toast = useToast();
-  const router = useRouter();
-  const [AuthState, loadingAuth] = useAuthState(auth);
-  const [URL, SetURL] = useState<{
-    home: string;
-    auth: string;
-  }>({ home: "/", auth: "/authenticate" });
+
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -435,9 +427,6 @@ export const useAuthValidate = (
         });
   };
 
-  const reDirectWithoutSession = (URL: string, type: "home" | "auth") => {
-    SetURL((prev) => ({ ...prev, [type]: URL }));
-  };
   //!---------------- SOCIAL MEDIA  ----------------//
   const returnErrorSocialMedia =
     (FIREBASE_ERRORS[
@@ -471,6 +460,5 @@ export const useAuthValidate = (
     returnLoadingState,
     onSubmitForm,
     SignWithGoogle,
-    reDirectWithoutSession,
   };
 };

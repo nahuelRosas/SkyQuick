@@ -1,24 +1,42 @@
-import { Flex } from "@chakra-ui/react";
+import { Center, Flex, Image } from "@chakra-ui/react";
 import React from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
+import { chatState } from "../../../atoms/chatState";
+import { logos } from "../../../utils/logos";
 
-import { currentChatAtom } from "../../../atoms/currentChat";
+import Body from "./body";
+import Footer from "./footer";
+import Head from "./head";
 
-type indexProps = {
-  PhotoURL?: string;
-  Name?: string;
-  time?: string;
-  isOnline?: boolean;
-};
-
-const Index: React.FC<indexProps> = ({ PhotoURL, Name, time, isOnline }) => {
-  const [chat, setChat] = useRecoilState(currentChatAtom);
+const Index = () => {
+  const { uid } = useRecoilValue(chatState);
 
   return (
-    <Flex bg={"gray.900"} h="full" w="full" flexDir="column" overflow={"auto"}>
-      {/* <Head />
-      <Body />
-      <Footer /> */}
+    <Flex bg={"gray.900"} h="full" w="100%" flexDir="column" overflow={"auto"}>
+      {uid && (
+        <>
+          <Head />
+          <Body />
+          <Footer />
+        </>
+      )}
+      {!uid && (
+        <Center
+          bg={"blackAlpha.100"}
+          alignItems="center"
+          justifyContent="center"
+          gap={4}
+          h={"100%"}
+          p={5}>
+          <Image
+            src={logos.light}
+            alt="SkyQuick Logo"
+            w="50%"
+            h="50%"
+            objectFit="contain"
+          />
+        </Center>
+      )}
     </Flex>
   );
 };

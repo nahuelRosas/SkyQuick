@@ -12,20 +12,17 @@ import {
   HiOutlineVideoCamera,
   HiOutlineDotsVertical,
 } from "react-icons/hi";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { chatState } from "../../../atoms/chatState";
 import { chatDefault } from "../../../utils/chatDefault";
 
-type HeadProps = {
-  PhotoURL?: string;
-  Name?: string;
-  time?: string;
-  isOnline?: boolean;
-};
+const Head = () => {
+  const { displayName, email, photoURL, uid } = useRecoilValue(chatState);
 
-const Head: React.FC<HeadProps> = ({ PhotoURL, Name, time, isOnline }) => {
-  const _Name = Name ? Name : chatDefault.Name;
-  const Name_ = _Name.length > 20 ? _Name.slice(0, 20) + "..." : _Name;
+  // const _Name = Name ? Name : chatDefault.Name;
+  // const Name_ = _Name.length > 20 ? _Name.slice(0, 20) + "..." : _Name;
 
-  const _isOnline = isOnline ? isOnline : chatDefault.isOnline;
+  // const _isOnline = isOnline ? isOnline : chatDefault.isOnline;
 
   return (
     <Flex
@@ -43,12 +40,13 @@ const Head: React.FC<HeadProps> = ({ PhotoURL, Name, time, isOnline }) => {
         borderRadius="full"
         boxSize="4rem"
         cursor="pointer"
-        src={PhotoURL ? PhotoURL : chatDefault.PhotoURL}>
-        <AvatarBadge
+        src={photoURL ? photoURL : null}>
+        {/* <AvatarBadge
           boxSize="0.9em"
           bg={_isOnline ? "green.500" : "gray.500"}
-        />
+        /> */}
       </Avatar>
+
       <Flex
         alignItems="left"
         justifyContent="left"
@@ -56,12 +54,13 @@ const Head: React.FC<HeadProps> = ({ PhotoURL, Name, time, isOnline }) => {
         w={"full"}
         cursor="pointer">
         <Text fontSize={"xl"} fontWeight={"bold"} color={"gray.200"}>
-          {Name_}
+          {displayName}
         </Text>
-        <Text mt={2} fontSize={"md"} fontWeight={"normal"} color={"gray.200"}>
+        {/* <Text mt={2} fontSize={"md"} fontWeight={"normal"} color={"gray.200"}>
           {time ? time : "Click here for Contact Info"}
-        </Text>
+        </Text> */}
       </Flex>
+      {/*
       <Flex
         alignItems="center"
         justifyContent="right"
@@ -94,7 +93,7 @@ const Head: React.FC<HeadProps> = ({ PhotoURL, Name, time, isOnline }) => {
           variant="ghost"
           isRound
         />
-      </Flex>
+      </Flex> */}
     </Flex>
   );
 };

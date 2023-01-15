@@ -9,8 +9,8 @@ const Sidebar: React.FC = () => {
     <Box
       bg={"blackAlpha.900"}
       borderRight="4px"
-      borderRightColor={"red.300"}
-      h="full"
+      borderRightColor={"cyan.300"}
+      w={"100%"}
       overflow={"auto"}>
       <Head />
       <Contacts />

@@ -1,5 +1,6 @@
-import { atom, AtomEffect, useSetRecoilState } from "recoil";
-import { recoilPersist } from "recoil-persist";
+import { atom, AtomEffect, useSetRecoilState } from 'recoil';
+import { recoilPersist } from 'recoil-persist';
+
 const { persistAtom } = recoilPersist();
 
 const ssrCompletedState = atom({

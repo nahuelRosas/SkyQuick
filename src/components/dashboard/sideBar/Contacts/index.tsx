@@ -1,11 +1,11 @@
 import { Flex } from "@chakra-ui/react";
 import algoliasearch from "algoliasearch/lite";
 import React from "react";
-import { Hits, InstantSearch } from "react-instantsearch-dom";
+import { InstantSearch } from "react-instantsearch-dom";
 import { useRecoilValue } from "recoil";
 
 import { searchQueryState } from "../../../../atoms/searchQueryState";
-import Contact from "./Contact";
+import Following from "./Following";
 import InfiniteHits from "./InfiniteHits";
 import Loading from "./Loading";
 import SearchBox from "./SearchBox";
@@ -16,7 +16,6 @@ const searchClient = algoliasearch(
 );
 const Contacts = () => {
   const { query, state, loading } = useRecoilValue(searchQueryState);
-
   return (
     <Flex
       direction="column"
@@ -27,8 +26,9 @@ const Contacts = () => {
       p={4}>
       <InstantSearch searchClient={searchClient} indexName={"prod_Users"}>
         <SearchBox />
-        {state && query.length > 0 && <InfiniteHits />}
+        {state && query.length > 0 && !loading && <InfiniteHits />}
         {loading && <Loading />}
+        {state && query.length === 0 && <Following />}
       </InstantSearch>
     </Flex>
   );

@@ -35,6 +35,7 @@ const ContactOnFollowing = ({ hit }: { hit: DocumentData }) => {
             displayName: hit.displayName,
             email: hit.email,
             photoURL: hit.photoURL,
+            about: hit.about,
           })
         }>
         <Avatar

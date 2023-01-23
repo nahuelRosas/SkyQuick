@@ -23,6 +23,10 @@ export const RecoverUserData = (AuthState: User | null | undefined) => {
           createdAt: Data.createdAt,
           providerData: Data.providerData,
           updatedAt: Data.updatedAt,
+          friends: Data.friends,
+          recivedRequestFriends: Data.recivedRequestFriends,
+          sentRequestFriends: Data.sentRequestFriends,
+          about: Data.about,
         },
       });
     }

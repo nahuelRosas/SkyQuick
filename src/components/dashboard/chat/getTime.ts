@@ -1,4 +1,8 @@
-export const GetTime = (timestamp: { toDate: () => string | number | Date }) => {
+export const GetTime = (timestamp: {
+  toDate: () => string | number | Date;
+}) => {
+  if (!timestamp) return "";
+
   const time = new Date(timestamp.toDate()).toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "numeric",

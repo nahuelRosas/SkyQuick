@@ -14,14 +14,20 @@ const ContactOnSearch = ({
     displayName: string;
     email: string;
     photoURL: string;
+    about: string;
   };
 }) => {
+  const { friendsValidate, sendRequestFollow, checkIfItsMe } =
+    useRecoveryData();
+
+  if (checkIfItsMe(hit.uid)) return <></>;
+
   const setChat = useSetRecoilState(principalChatAtom);
-  const [isFollowing, setIsFollowing] = useState(false);
-  const { followingValidate, followUser } = useRecoveryData();
+  const [isfriends, setIsfriends] = useState(false);
+
   useEffect(() => {
-    followingValidate(hit.uid).then((res) => setIsFollowing(res));
-  }, [followingValidate, hit.uid]);
+    friendsValidate(hit.uid).then((res) => setIsfriends(res));
+  }, [friendsValidate, hit.uid]);
 
   return (
     <Grid
@@ -52,6 +58,7 @@ const ContactOnSearch = ({
             displayName: hit.displayName,
             email: hit.email,
             photoURL: hit.photoURL,
+            about: hit.about,
           })
         }>
         <Avatar
@@ -98,12 +105,12 @@ const ContactOnSearch = ({
           aria-label="Call Segun"
           size="sm"
           fontSize={"2xl"}
-          icon={!isFollowing ? <HiUserAdd /> : <HiUser />}
+          icon={!isfriends ? <HiUserAdd /> : <HiUser />}
           colorScheme="cyan"
-          variant={isFollowing ? "solid" : "outline"}
+          variant={isfriends ? "solid" : "outline"}
           onClick={() => {
-            if (!isFollowing) {
-              followUser(hit);
+            if (!isfriends) {
+              sendRequestFollow(hit);
               return;
             }
           }}

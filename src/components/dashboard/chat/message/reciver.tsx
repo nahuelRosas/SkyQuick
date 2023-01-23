@@ -1,16 +1,18 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex, Text, Avatar } from "@chakra-ui/react";
+import { Timestamp } from "firebase/firestore";
 import React from "react";
+import { GetTime } from "../getTime";
 
 type reciverProps = {
   message: string;
+  timestamp: Timestamp;
 };
 
 const reciver: React.FC<reciverProps> = (Data) => {
   return (
     <Flex
       color="white"
-      fontWeight={"bold"}
-      bg={"red.800"}
+      bg={"red.900"}
       p={4}
       borderRadius={10}
       w={"auto"}
@@ -21,7 +23,7 @@ const reciver: React.FC<reciverProps> = (Data) => {
         {Data.message}
       </Text>
       <Text fontSize={"xs"} color={"gray.400"} alignSelf={"flex-end"}>
-        {/* {GetTime(Data.timestamp)} */}
+        {GetTime(Data.timestamp)}
       </Text>
     </Flex>
   );

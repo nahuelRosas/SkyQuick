@@ -15,6 +15,7 @@ const InfiniteHits = ({
     email: string;
     photoURL: string;
     uid: string;
+    about: string;
   }[];
   hasPrevious: boolean;
   refinePrevious: () => void;
@@ -72,6 +73,7 @@ const InfiniteHits = ({
             email: string;
             photoURL: string;
             uid: string;
+            about: string;
           },
           key: string | number
         ) => (

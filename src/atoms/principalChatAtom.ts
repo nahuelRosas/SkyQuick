@@ -5,6 +5,7 @@ export interface principalChatAtom {
   displayName: string;
   email: string;
   photoURL: string;
+  about: string;
 }
 
 export const principalChatAtom = atom<principalChatAtom>({
@@ -14,5 +15,6 @@ export const principalChatAtom = atom<principalChatAtom>({
     displayName: "",
     email: "",
     photoURL: "",
+    about: "",
   },
 });

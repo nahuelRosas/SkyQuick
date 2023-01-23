@@ -30,8 +30,14 @@ const Footer = () => {
       _focus={{
         bg: "blackAlpha.800",
       }}
-      // onSubmit={sendMessage}
-    >
+      onSubmit={
+        input.length > 0
+          ? () => {
+              sentMessage(input);
+              setInput("");
+            }
+          : () => {}
+      }>
       <IconButton
         aria-label="Icons"
         colorScheme={"cyan"}
@@ -42,16 +48,7 @@ const Footer = () => {
         _hover={{ bg: "transparent" }}
         _active={{ bg: "transparent" }}
       />
-      <IconButton
-        aria-label="Icons"
-        colorScheme={"cyan"}
-        icon={<HiOutlinePaperClip />}
-        fontSize="3xl"
-        variant="ghost"
-        isRound
-        _hover={{ bg: "transparent" }}
-        _active={{ bg: "transparent" }}
-      />
+
       <Input
         placeholder="Type a message"
         variant="filled"
@@ -80,13 +77,10 @@ const Footer = () => {
         aria-label="Icons"
         colorScheme={"cyan"}
         transition="all 0.2s"
-        icon={
-          input.length > 0 ? (
-            <HiOutlineArrowRightCircle />
-          ) : (
-            <HiOutlineMicrophone />
-          )
-        }
+        icon={<HiOutlineArrowRightCircle />}
+        disabled={input.length > 0 ? false : true}
+        color={input.length > 0 ? "cyan.400" : "gray.500"}
+        fontSize="3xl"
         onClick={
           input.length > 0
             ? () => {
@@ -95,7 +89,6 @@ const Footer = () => {
               }
             : () => {}
         }
-        fontSize="3xl"
         variant="ghost"
         isRound
         _hover={{ bg: "transparent" }}

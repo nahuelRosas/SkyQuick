@@ -1,16 +1,18 @@
 import { Flex, Text } from "@chakra-ui/react";
+import { Timestamp } from "firebase/firestore";
 import React from "react";
+import { GetTime } from "../getTime";
 
 type senderProps = {
   message: string;
+  timestamp: Timestamp;
 };
 
 const sender: React.FC<senderProps> = (Data) => {
   return (
     <Flex
       color="white"
-      fontWeight={"bold"}
-      bg={"cyan.800"}
+      bg={"cyan.900"}
       p={4}
       borderRadius={10}
       w={"auto"}
@@ -21,7 +23,7 @@ const sender: React.FC<senderProps> = (Data) => {
         {Data.message}
       </Text>
       <Text fontSize={"xs"} color={"gray.400"} alignSelf={"flex-end"}>
-        {/* {GetTime(Data.timestamp)} */}
+        {GetTime(Data.timestamp)}
       </Text>
     </Flex>
   );

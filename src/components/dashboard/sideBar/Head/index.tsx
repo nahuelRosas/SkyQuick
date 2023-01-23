@@ -3,6 +3,7 @@ import React from "react";
 
 import useRecoveryData from "../../../../hooks/useRecoveryData";
 import BlockIcons from "./blockIcons";
+import FriendRequest from "./friendsRequest";
 
 const index = () => {
   const { recoverData } = useRecoveryData();
@@ -17,9 +18,16 @@ const index = () => {
       <Avatar
         borderRadius="full"
         boxSize="3rem"
-        src={recoverData("UserPhoto")}
+        src={recoverData("UserPhoto") as string}
       />
-      <BlockIcons />
+      <Flex
+        alignItems="center"
+        justifyContent="space-between"
+        gap={3}
+        flexDir={"row"}>
+        <FriendRequest />
+        <BlockIcons />
+      </Flex>
     </Flex>
   );
 };

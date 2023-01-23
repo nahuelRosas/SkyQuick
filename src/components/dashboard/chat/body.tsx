@@ -12,7 +12,6 @@ const Body = () => {
     const element = document.getElementById("chat");
     element?.scrollTo(0, element.scrollHeight);
   };
-  console.log(messages);
   useEffect(() => {
     scrollToBottom();
   }, [messages]);

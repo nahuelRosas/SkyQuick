@@ -5,7 +5,7 @@ import { InstantSearch } from "react-instantsearch-dom";
 import { useRecoilValue } from "recoil";
 
 import { searchQueryAtom } from "../../../../atoms/searchQueryAtom";
-import Following from "./Following";
+import Following from "./friends";
 import InfiniteHits from "./InfiniteHits";
 import Loading from "./Loading";
 import SearchBox from "./SearchBox";

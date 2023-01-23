@@ -1,78 +1,99 @@
 import { useToast } from "@chakra-ui/react";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import {
+  arrayUnion,
+  doc,
+  DocumentData,
+  serverTimestamp,
+  setDoc,
+  arrayRemove,
+  updateDoc,
+} from "firebase/firestore";
 import { nanoid } from "nanoid";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilValue } from "recoil";
 
-import { followingAtom } from "../atoms/followingAtom";
 import { principalChatAtom } from "../atoms/principalChatAtom";
 import { sessionAtom } from "../atoms/sessionAtom";
 import { auth, firestore } from "../firebase/clientApp";
 import { RecoverChats } from "./functions/recoverChats";
-import { RecoverFollowing } from "./functions/recoverFollowing";
 import { RecoverUserData } from "./functions/recoverUserData";
 
 const useRecoveryData = () => {
   const [AuthState] = useAuthState(auth);
   const toast = useToast();
+  const { user } = useRecoilValue(sessionAtom);
+  const userChat = useRecoilValue(principalChatAtom);
 
   const RootRecovery = () => {
     RecoverUserData(AuthState);
-    RecoverFollowing(AuthState);
     RecoverChats(AuthState);
   };
 
-  const sessionData = useRecoilValue(sessionAtom);
-
-  const recoverData = (type: "UserPhoto") => {
+  const recoverData = (
+    type: "UserPhoto" | "recivedRequestFriends" | "friends"
+  ) => {
     switch (type) {
       case "UserPhoto":
-        return sessionData.user?.photoURL;
+        return user?.photoURL;
+      case "recivedRequestFriends":
+        return user?.recivedRequestFriends || [];
+      case "friends":
+        return user?.friends || [];
+
       default:
         return undefined;
     }
   };
 
-  const Following = useRecoilValue(followingAtom);
-  const followingValidate = async (uid: string) => {
-    if (Following.findIndex((following) => following.uid === uid) > -1) {
+  const friendsValidate = async (uid: string) => {
+    if (!user || !user.friends) return false;
+    if (user.friends.findIndex((user) => user.uid === uid) !== -1) {
       return true;
     }
     return false;
   };
 
-  const followUser = async (User: {
+  const sendRequestFollow = async (User: {
     uid: string;
     displayName: string;
     email: string;
     photoURL: string;
+    about: string;
   }) => {
     if (!AuthState) return;
-    const docRef = doc(
-      firestore,
-      "users",
-      AuthState.uid,
-      "following",
-      User.uid
-    );
-    await setDoc(docRef, {
-      uid: User.uid,
-      displayName: User.displayName,
-      email: User.email,
-      photoURL: User.photoURL,
+
+    await updateDoc(doc(firestore, "users", AuthState.uid), {
+      sentRequestFriends: arrayUnion({
+        uid: User.uid,
+        displayName: User.displayName,
+        email: User.email,
+        photoURL: User.photoURL,
+        about: User.about,
+      }),
     })
-      .then(() => {
-        toast({
-          title: "Contact added",
-          description: "You can now chat with this contact",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
+      .then(async () => {
+        await updateDoc(doc(firestore, "users", User.uid), {
+          recivedRequestFriends: arrayUnion({
+            uid: AuthState.uid,
+            displayName: AuthState.displayName,
+            email: AuthState.email,
+            photoURL: user?.photoURL,
+            about: user?.about,
+          }),
+        }).then(() => {
+          toast({
+            title: "Request sent",
+            description:
+              "You will be able to talk to this user when they accept your request",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
         });
       })
-      .catch((error: { message: any }) => {
+      .catch((error: { message: string }) => {
         toast({
-          title: "Error adding contact",
+          title: "Error sending request",
           description: error.message,
           status: "error",
           duration: 3000,
@@ -80,8 +101,6 @@ const useRecoveryData = () => {
         });
       });
   };
-
-  const userChat = useRecoilValue(principalChatAtom);
 
   const sentMessage = async (message: string) => {
     if (!AuthState || !message.length) return;
@@ -111,12 +130,156 @@ const useRecoveryData = () => {
     });
   };
 
+  const checkIfItsMe = (uid: string) => {
+    if (AuthState && AuthState.uid === uid) return true;
+    return false;
+  };
+
+  const acceptRequest = async (User: DocumentData) => {
+    if (!AuthState) return;
+    await updateDoc(doc(firestore, "users", AuthState.uid), {
+      friends: arrayUnion({
+        uid: User.uid,
+        displayName: User.displayName,
+        email: User.email,
+        photoURL: User.photoURL,
+        about: User.about,
+      }),
+      recivedRequestFriends: arrayRemove({
+        uid: User.uid,
+        displayName: User.displayName,
+        email: User.email,
+        photoURL: User.photoURL,
+        about: User.about,
+      }),
+    })
+      .then(async () => {
+        await updateDoc(doc(firestore, "users", User.uid), {
+          friends: arrayUnion({
+            uid: AuthState.uid,
+            displayName: AuthState.displayName,
+            email: AuthState.email,
+            photoURL: user?.photoURL,
+            about: user?.about,
+          }),
+          sentRequestFriends: arrayRemove({
+            uid: AuthState.uid,
+            displayName: AuthState.displayName,
+            email: AuthState.email,
+            photoURL: user?.photoURL,
+            about: user?.about,
+          }),
+        }).then(() => {
+          toast({
+            title: "Request accepted",
+            description: "You can now talk to this user",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
+        });
+      })
+      .catch((error: { message: string }) => {
+        toast({
+          title: "Error accepting request",
+          description: error.message,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      });
+  };
+
+  const deleteRequest = async (User: DocumentData) => {
+    if (!AuthState) return;
+    await updateDoc(doc(firestore, "users", AuthState.uid), {
+      recivedRequestFriends: arrayRemove({
+        uid: User.uid,
+        displayName: User.displayName,
+        email: User.email,
+        photoURL: User.photoURL,
+        about: User.about,
+      }),
+    })
+      .then(async () => {
+        await updateDoc(doc(firestore, "users", User.uid), {
+          sentRequestFriends: arrayRemove({
+            uid: AuthState.uid,
+            displayName: AuthState.displayName,
+            email: AuthState.email,
+            photoURL: user?.photoURL,
+            about: user?.about,
+          }),
+        }).then(() => {
+          toast({
+            title: "Request deleted",
+            duration: 3000,
+            isClosable: true,
+            status: "success",
+          });
+        });
+      })
+      .catch((error: { message: string }) => {
+        toast({
+          title: "Error deleting request",
+          description: error.message,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      });
+  };
+
+  const deleteFriend = async (User: DocumentData) => {
+    if (!AuthState) return;
+    await updateDoc(doc(firestore, "users", AuthState.uid), {
+      friends: arrayRemove({
+        uid: User.uid,
+        displayName: User.displayName,
+        email: User.email,
+        photoURL: User.photoURL,
+        about: User.about,
+      }),
+    })
+      .then(async () => {
+        await updateDoc(doc(firestore, "users", User.uid), {
+          friends: arrayRemove({
+            uid: AuthState.uid,
+            displayName: AuthState.displayName,
+            email: AuthState.email,
+            photoURL: user?.photoURL,
+            about: user?.about,
+          }),
+        }).then(() => {
+          toast({
+            title: "Friend deleted",
+            duration: 3000,
+            isClosable: true,
+            status: "success",
+          });
+        });
+      })
+      .catch((error: { message: string }) => {
+        toast({
+          title: "Error deleting friend",
+          description: error.message,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      });
+  };
+
   return {
+    deleteRequest,
+    acceptRequest,
     RootRecovery,
     recoverData,
-    followingValidate,
-    followUser,
+    friendsValidate,
+    sendRequestFollow,
     sentMessage,
+    checkIfItsMe,
+    deleteFriend,
   };
 };
 

@@ -1,15 +1,16 @@
 import { Flex } from "@chakra-ui/react";
 import React from "react";
 import { useRecoilValue } from "recoil";
-import { sessionAtom } from "../../../authentication/atomsAuth/sessionAtom";
+
+import { followingAtom } from "../../../../atoms/followingAtom";
 import ContactOnFollowing from "./ContactOnFollowing";
 
 const Following = () => {
-  const { user } = useRecoilValue(sessionAtom);
+  const users = useRecoilValue(followingAtom);
 
   return (
     <Flex w={"100%"}>
-      {user?.following.map((following, key) => {
+      {users?.map((following, key) => {
         return <ContactOnFollowing key={key} hit={following} />;
       })}
     </Flex>

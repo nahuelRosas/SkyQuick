@@ -1,25 +1,44 @@
-import { Flex, useColorModeValue } from "@chakra-ui/react";
-import React from "react";
+import { Flex } from "@chakra-ui/react";
+import React, { useEffect } from "react";
 import { useRecoilValue } from "recoil";
-import { chatState } from "../../../atoms/chatState";
-import { sessionAtom } from "../../authentication/atomsAuth/sessionAtom";
 
-type bodyProps = {};
+import { chatsAtom } from "../../../atoms/chatsAtom";
+import MessageComponent from "./message";
 
-const Body: React.FC<bodyProps> = () => {
-  const { user } = useRecoilValue(sessionAtom);
-  const userChat = useRecoilValue(chatState);
+const Body = () => {
+  const messages = useRecoilValue(chatsAtom);
 
-  
+  const scrollToBottom = () => {
+    const element = document.getElementById("chat");
+    element?.scrollTo(0, element.scrollHeight);
+  };
+  console.log(messages);
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   return (
     <Flex
-      bg={"blackAlpha.100"}
       alignItems="center"
       justifyContent="space-between"
       gap={4}
-      p={5}
+      direction="column-reverse"
       w={"100%"}
-      h={"100%"}></Flex>
+      overflowY={"hidden"}
+      h={"100%"}>
+      <Flex
+        id="chat"
+        direction="column"
+        w={"100%"}
+        h={"auto"}
+        overflowX={"hidden"}
+        gap={4}
+        p={5}>
+        {messages?.map((data, key) => (
+          <MessageComponent key={key} Data={data} />
+        ))}
+      </Flex>
+    </Flex>
   );
 };
 export default Body;

@@ -22,8 +22,8 @@ import {
   specialCharRegex,
   upperCaseRegex,
 } from "../../../utils/regex";
-import { authModalAtom } from "../atomsAuth/authModalAtom";
-import { sessionAtom } from "../atomsAuth/sessionAtom";
+import { authModalAtom } from "../../../atoms/authModalAtom";
+import { sessionAtom } from "../../../atoms/sessionAtom";
 
 export const useAuthValidate = (
   type?: "sign" | "create" | "resetPassword" | "AuthButtons"

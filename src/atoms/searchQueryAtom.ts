@@ -1,13 +1,13 @@
 import { atom } from "recoil";
 
-export interface searchQueryState {
+export interface searchQueryAtom {
   query: string;
   state: boolean;
   loading: boolean;
 }
 
-export const searchQueryState = atom<searchQueryState>({
-  key: "searchQueryState",
+export const searchQueryAtom = atom<searchQueryAtom>({
+  key: "searchQueryAtom",
   default: {
     query: "",
     state: false,

@@ -1,19 +1,10 @@
-import {
-  Avatar,
-  Flex,
-  Grid,
-  IconButton,
-  Text,
-  useToast,
-} from "@chakra-ui/react";
-import { doc, setDoc } from "firebase/firestore";
+import { Avatar, Flex, Grid, IconButton, Text } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { HiUser, HiUserAdd } from "react-icons/hi";
-import { useSetRecoilState, useRecoilValue } from "recoil";
+import { useSetRecoilState } from "recoil";
 
-import { chatState } from "../../../../atoms/chatState";
-import { firestore } from "../../../../firebase/clientApp";
-import { sessionAtom } from "../../../authentication/atomsAuth/sessionAtom";
-import { useState, useEffect } from "react";
+import { principalChatAtom } from "../../../../atoms/principalChatAtom";
+import useRecoveryData from "../../../../hooks/useRecoveryData";
 
 const ContactOnSearch = ({
   hit,
@@ -25,46 +16,12 @@ const ContactOnSearch = ({
     photoURL: string;
   };
 }) => {
-  const setChat = useSetRecoilState(chatState);
-  const { user } = useRecoilValue(sessionAtom);
-  const toast = useToast();
-  const addContact = async () => {
-    const docRef = doc(firestore, "users", user.uid, "following", hit.uid);
-    await setDoc(docRef, {
-      uid: hit.uid,
-      displayName: hit.displayName,
-      email: hit.email,
-      photoURL: hit.photoURL,
-    })
-      .then(() => {
-        toast({
-          title: "Contact added",
-          description: "You can now chat with this contact",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((error) => {
-        toast({
-          title: "Error adding contact",
-          description: error.message,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      });
-  };
-
+  const setChat = useSetRecoilState(principalChatAtom);
   const [isFollowing, setIsFollowing] = useState(false);
-
+  const { followingValidate, followUser } = useRecoveryData();
   useEffect(() => {
-    if (
-      user.following.findIndex((following) => following.uid === hit.uid) > -1
-    ) {
-      setIsFollowing(true);
-    }
-  }, [user.following]);
+    followingValidate(hit.uid).then((res) => setIsFollowing(res));
+  }, [followingValidate, hit.uid]);
 
   return (
     <Grid
@@ -146,7 +103,7 @@ const ContactOnSearch = ({
           variant={isFollowing ? "solid" : "outline"}
           onClick={() => {
             if (!isFollowing) {
-              addContact();
+              followUser(hit);
               return;
             }
           }}

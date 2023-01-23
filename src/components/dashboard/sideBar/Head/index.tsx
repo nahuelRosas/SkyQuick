@@ -1,12 +1,11 @@
-import { Avatar, Flex } from '@chakra-ui/react';
-import React from 'react';
-import { useRecoilValue } from 'recoil';
+import { Avatar, Flex } from "@chakra-ui/react";
+import React from "react";
 
-import { sessionAtom } from '../../../authentication/atomsAuth/sessionAtom';
-import BlockIcons from './blockIcons';
+import useRecoveryData from "../../../../hooks/useRecoveryData";
+import BlockIcons from "./blockIcons";
 
 const index = () => {
-  const { user } = useRecoilValue(sessionAtom);
+  const { recoverData } = useRecoveryData();
 
   return (
     <Flex
@@ -15,7 +14,11 @@ const index = () => {
       justifyContent="space-between"
       gap={5}
       flexDir={"row"}>
-      <Avatar borderRadius="full" boxSize="3rem" src={user?.photoURL} />
+      <Avatar
+        borderRadius="full"
+        boxSize="3rem"
+        src={recoverData("UserPhoto")}
+      />
       <BlockIcons />
     </Flex>
   );

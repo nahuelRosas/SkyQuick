@@ -13,16 +13,12 @@ import {
   HiOutlineDotsVertical,
 } from "react-icons/hi";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { chatState } from "../../../atoms/chatState";
+import { principalChatAtom } from "../../../atoms/principalChatAtom";
 import { chatDefault } from "../../../utils/chatDefault";
 
 const Head = () => {
-  const { displayName, email, photoURL, uid } = useRecoilValue(chatState);
-
-  // const _Name = Name ? Name : chatDefault.Name;
-  // const Name_ = _Name.length > 20 ? _Name.slice(0, 20) + "..." : _Name;
-
-  // const _isOnline = isOnline ? isOnline : chatDefault.isOnline;
+  const { displayName, email, photoURL, uid } =
+    useRecoilValue(principalChatAtom);
 
   return (
     <Flex
@@ -40,7 +36,7 @@ const Head = () => {
         borderRadius="full"
         boxSize="4rem"
         cursor="pointer"
-        src={photoURL ? photoURL : null}>
+        src={photoURL ? photoURL : undefined}>
         {/* <AvatarBadge
           boxSize="0.9em"
           bg={_isOnline ? "green.500" : "gray.500"}
@@ -56,44 +52,7 @@ const Head = () => {
         <Text fontSize={"xl"} fontWeight={"bold"} color={"gray.200"}>
           {displayName}
         </Text>
-        {/* <Text mt={2} fontSize={"md"} fontWeight={"normal"} color={"gray.200"}>
-          {time ? time : "Click here for Contact Info"}
-        </Text> */}
       </Flex>
-      {/*
-      <Flex
-        alignItems="center"
-        justifyContent="right"
-        flexDir={"row"}
-        w={"full"}
-        cursor="pointer"
-        gap={4}>
-        <IconButton
-          aria-label="Search"
-          icon={<HiOutlineSearch />}
-          fontSize={"2xl"}
-          colorScheme="red"
-          color={"red.400"}
-          variant="ghost"
-          isRound
-        />
-        <IconButton
-          aria-label="Call Segun"
-          icon={<HiOutlineVideoCamera />}
-          fontSize={"2xl"}
-          colorScheme="red"
-          variant="ghost"
-          isRound
-        />
-        <IconButton
-          aria-label="Menu"
-          icon={<HiOutlineDotsVertical />}
-          fontSize={"2xl"}
-          colorScheme="red"
-          variant="ghost"
-          isRound
-        />
-      </Flex> */}
     </Flex>
   );
 };

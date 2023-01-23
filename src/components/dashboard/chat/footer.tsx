@@ -1,6 +1,4 @@
 import { Flex, IconButton, Input } from "@chakra-ui/react";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
-import { nanoid } from "nanoid";
 import React, { useState } from "react";
 import {
   HiOutlineArrowRightCircle,
@@ -8,52 +6,18 @@ import {
   HiOutlineMicrophone,
   HiOutlinePaperClip,
 } from "react-icons/hi2";
-import { useRecoilValue } from "recoil";
-
-import { chatState } from "../../../atoms/chatState";
-import { firestore } from "../../../firebase/clientApp";
-import { sessionAtom } from "../../authentication/atomsAuth/sessionAtom";
+import useRecoveryData from "../../../hooks/useRecoveryData";
 
 const Footer = () => {
   const [input, setInput] = useState("");
-  const { user } = useRecoilValue(sessionAtom);
-  const userChat = useRecoilValue(chatState);
 
-  const sendMessage = async (event: { preventDefault: () => void }) => {
-    event.preventDefault();
-    const idMessage = nanoid();
-    const docRef = doc(firestore, `users/${user.uid}/chats/${idMessage}`);
-    await setDoc(
-      docRef,
-      {
-        reciverUID: userChat.uid,
-        message: input,
-        timestamp: serverTimestamp(),
-        reciverPhotoURL: userChat.photoURL,
-        reciverName: userChat.displayName,
-        senderUID: user.uid,
-        senderPhotoURL: user.photoURL,
-        senderName: user.displayName,
-      },
-      { merge: true }
-    )
-      .then(() => {
-        console.log("Document written with ID: ", docRef.id);
-      })
-      .catch((error) => {
-        console.error("Error adding document: ", error);
-      });
-
-    setInput("");
-  };
-
+  const { sentMessage } = useRecoveryData();
   return (
     <Flex
       bg={"blackAlpha.900"}
       alignItems="center"
       justifyContent="space-between"
       gap={4}
-      borderRadius={"xl"}
       p={5}
       w={"100%"}
       h={"auto"}
@@ -66,7 +30,8 @@ const Footer = () => {
       _focus={{
         bg: "blackAlpha.800",
       }}
-      onSubmit={sendMessage}>
+      // onSubmit={sendMessage}
+    >
       <IconButton
         aria-label="Icons"
         colorScheme={"cyan"}
@@ -74,6 +39,8 @@ const Footer = () => {
         fontSize="3xl"
         variant="ghost"
         isRound
+        _hover={{ bg: "transparent" }}
+        _active={{ bg: "transparent" }}
       />
       <IconButton
         aria-label="Icons"
@@ -82,6 +49,8 @@ const Footer = () => {
         fontSize="3xl"
         variant="ghost"
         isRound
+        _hover={{ bg: "transparent" }}
+        _active={{ bg: "transparent" }}
       />
       <Input
         placeholder="Type a message"
@@ -118,10 +87,19 @@ const Footer = () => {
             <HiOutlineMicrophone />
           )
         }
-        onClick={sendMessage}
+        onClick={
+          input.length > 0
+            ? () => {
+                sentMessage(input);
+                setInput("");
+              }
+            : () => {}
+        }
         fontSize="3xl"
         variant="ghost"
         isRound
+        _hover={{ bg: "transparent" }}
+        _active={{ bg: "transparent" }}
       />
     </Flex>
   );

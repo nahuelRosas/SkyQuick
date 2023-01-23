@@ -4,18 +4,18 @@ import React from "react";
 import { InstantSearch } from "react-instantsearch-dom";
 import { useRecoilValue } from "recoil";
 
-import { searchQueryState } from "../../../../atoms/searchQueryState";
+import { searchQueryAtom } from "../../../../atoms/searchQueryAtom";
 import Following from "./Following";
 import InfiniteHits from "./InfiniteHits";
 import Loading from "./Loading";
 import SearchBox from "./SearchBox";
 
 const searchClient = algoliasearch(
-  process.env.NEXT_PUBLIC_ALGOLIA_APPID,
-  process.env.NEXT_PUBLIC_ALGOLIA_SEARCHKEY
+  process.env.NEXT_PUBLIC_ALGOLIA_APPID as string,
+  process.env.NEXT_PUBLIC_ALGOLIA_SEARCHKEY as string
 );
 const Contacts = () => {
-  const { query, state, loading } = useRecoilValue(searchQueryState);
+  const { query, state, loading } = useRecoilValue(searchQueryAtom);
   return (
     <Flex
       direction="column"

@@ -1,27 +1,14 @@
-import {
-  Flex,
-  IconButton,
-  Input,
-  InputGroup,
-  InputRightElement,
-} from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import { HiOutlineSearch, HiX } from "react-icons/hi";
-import { connectSearchBox } from "react-instantsearch-dom";
-import { useSetRecoilState } from "recoil";
+import { Flex, IconButton, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import { HiOutlineSearch, HiX } from 'react-icons/hi';
+import { connectSearchBox } from 'react-instantsearch-dom';
+import { useSetRecoilState } from 'recoil';
 
-import { searchQueryState } from "../../../../atoms/searchQueryState";
+import { searchQueryAtom } from '../../../../atoms/searchQueryAtom';
 
-const SearchBoxUI = ({
-  refine,
-  isSearchStalled,
-}: {
-  currentRefinement: string;
-  isSearchStalled: boolean;
-  refine: Function;
-}) => {
+const SearchBoxUI = ({ refine }: { refine: Function }) => {
   const [query, setQuery] = useState("");
-  const setValue = useSetRecoilState(searchQueryState);
+  const setValue = useSetRecoilState(searchQueryAtom);
   useEffect(() => {
     setValue({ query: query, state: false, loading: true });
     const timeOutId = setTimeout(() => {

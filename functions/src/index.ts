@@ -50,3 +50,41 @@ export const createUser = functions.auth.user().onCreate(async (user) => {
   await userRef.set(userObj);
   logger.info("User created 🥳");
 });
+
+export const copyFunction = functions.firestore
+    .document("users/{userUID}/chats/{chatUID}")
+    .onCreate(async (snap, context) => {
+      const {chatUID} = context.params;
+      const {
+        message,
+        reciverName,
+        reciverPhotoURL,
+        reciverUID,
+        senderName,
+        senderPhotoURL,
+        senderUID,
+        timestamp,
+      } = snap.data();
+      const chatRef = firestore
+          .collection("users")
+          .doc(reciverUID)
+          .collection("chats")
+          .doc(chatUID);
+      const chatDoc = await chatRef.get();
+      if (chatDoc.exists) {
+        logger.info("Message already exists 🫡");
+        return;
+      }
+      const chatObj = {
+        message,
+        reciverName,
+        reciverPhotoURL,
+        reciverUID,
+        senderName,
+        senderPhotoURL,
+        senderUID,
+        timestamp,
+      };
+      await chatRef.set(chatObj);
+      logger.info("Message created 🥳");
+    });

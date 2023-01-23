@@ -2,10 +2,10 @@ import { Avatar, Flex, Grid, Text } from "@chakra-ui/react";
 import { DocumentData } from "firebase/firestore";
 import { useSetRecoilState } from "recoil";
 
-import { chatState } from "../../../../atoms/chatState";
+import { principalChatAtom } from "../../../../atoms/principalChatAtom";
 
 const ContactOnFollowing = ({ hit }: { hit: DocumentData }) => {
-  const setChat = useSetRecoilState(chatState);
+  const setChat = useSetRecoilState(principalChatAtom);
 
   return (
     <Grid
@@ -13,7 +13,6 @@ const ContactOnFollowing = ({ hit }: { hit: DocumentData }) => {
       bg={"gray.800"}
       w={"100%"}
       h={"auto"}
-      // maxH={"10rem"}
       templateColumns={"auto auto"}
       justifyContent={"center"}
       alignItems={"center"}

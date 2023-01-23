@@ -1,7 +1,7 @@
 import { Button, Flex, Text } from "@chakra-ui/react";
 import { connectInfiniteHits } from "react-instantsearch-dom";
 
-import Contact from "./ContactOnSearch";
+import ContactOnSearch from "./ContactOnSearch";
 
 const InfiniteHits = ({
   hits,
@@ -75,7 +75,7 @@ const InfiniteHits = ({
           },
           key: string | number
         ) => (
-          <Contact key={key} hit={hit} />
+          <ContactOnSearch key={key} hit={hit} />
         )
       )}
 

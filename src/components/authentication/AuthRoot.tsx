@@ -1,16 +1,10 @@
-import { collection, doc } from "firebase/firestore";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import {
-  useCollectionData,
-  useDocumentData,
-} from "react-firebase-hooks/firestore";
-import { useSetRecoilState } from "recoil";
 
-import { auth, firestore } from "../../firebase/clientApp";
-import { sessionAtom } from "./atomsAuth/sessionAtom";
+import { auth } from "../../firebase/clientApp";
 import Spinner from "./components/spinner";
+import useRecoveryData from "../../hooks/useRecoveryData";
 
 type AuthRootProps = {
   children: React.ReactNode;
@@ -18,25 +12,11 @@ type AuthRootProps = {
 
 const AuthRoot: React.FC<AuthRootProps> = (props: AuthRootProps) => {
   const [AuthState, loadingState] = useAuthState(auth);
-  const setSession = useSetRecoilState(sessionAtom);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const recoverRefUser = () => {
-    if (AuthState && AuthState.uid)
-      return doc(firestore, "users", AuthState.uid);
-
-    return null;
-  };
-  const [userData, loadingData] = useDocumentData(recoverRefUser());
-  const recoverRefFollowing = () => {
-    if (AuthState && AuthState.uid)
-      return collection(firestore, "users", AuthState.uid, "following");
-    return null;
-  };
-  const [followingData, loadingFollowingData] = useCollectionData(
-    recoverRefFollowing()
-  );
+  const { RootRecovery } = useRecoveryData();
+  RootRecovery();
 
   useEffect(() => {
     if (!AuthState && router.pathname !== "/authenticate" && !loadingState) {
@@ -47,35 +27,10 @@ const AuthRoot: React.FC<AuthRootProps> = (props: AuthRootProps) => {
       !loadingState
     ) {
       router.push("/");
-    } else if (
-      !AuthState &&
-      router.pathname === "/authenticate" &&
-      !loadingState
-    ) {
-      setLoading(false);
-    } else if (
-      AuthState &&
-      router.pathname !== "/authenticate" &&
-      !loadingState
-    ) {
-      if (userData && !loadingData && !loadingFollowingData) {
-        setLoading(false);
-        setSession({
-          user: {
-            uid: AuthState.uid,
-            email: AuthState.email,
-            displayName: AuthState.displayName,
-            photoURL: userData.photoURL,
-            emailVerified: AuthState.emailVerified,
-            createdAt: userData.createdAt,
-            providerData: AuthState.providerData,
-            updatedAt: userData.updatedAt,
-            following: followingData,
-          },
-        });
-      }
     }
-  }, [AuthState, router.pathname, loadingState, userData, loadingData]);
+
+    setLoading(false);
+  }, [AuthState, router, loadingState]);
 
   if (loading) {
     return <Spinner />;

@@ -1,7 +1,7 @@
 import { Center, Flex, Image } from "@chakra-ui/react";
 import React from "react";
 import { useRecoilValue } from "recoil";
-import { chatState } from "../../../atoms/chatState";
+import { principalChatAtom } from "../../../atoms/principalChatAtom";
 import { logos } from "../../../utils/logos";
 
 import Body from "./body";
@@ -9,7 +9,7 @@ import Footer from "./footer";
 import Head from "./head";
 
 const Index = () => {
-  const { uid } = useRecoilValue(chatState);
+  const { uid } = useRecoilValue(principalChatAtom);
 
   return (
     <Flex bg={"gray.900"} h="full" w="100%" flexDir="column" overflow={"auto"}>

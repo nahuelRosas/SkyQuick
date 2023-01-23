@@ -1,15 +1,19 @@
-import { Container, Grid } from "@chakra-ui/react";
+import { Container, Grid, useBreakpointValue } from "@chakra-ui/react";
 import React from "react";
 import Chat from "./chat";
 import Sidebar from "./sideBar";
 
-type DashboardProps = {};
-
-const Dashboard: React.FC<DashboardProps> = () => {
+const Dashboard = () => {
   return (
     <Container maxW="100%" h="100vh" bg={"blackAlpha.900"}>
       <Container maxW="95%" h="100vh" bg={"blackAlpha.100"} minH="100vh">
-        <Grid templateColumns={"auto 75%"} h="100vh">
+        <Grid
+          templateColumns={useBreakpointValue({
+            base: "1fr",
+            md: "2fr 3fr",
+            xl: "1fr 4fr",
+          })}
+          h="100vh">
           <Sidebar />
           <Chat />
         </Grid>

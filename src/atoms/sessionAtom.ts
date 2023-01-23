@@ -1,7 +1,7 @@
-import { DocumentData } from 'firebase/firestore';
-import { atom } from 'recoil';
+import { DocumentData } from "firebase/firestore";
+import { atom } from "recoil";
 
-import { persistAtomEffect } from './SSRStateAtom';
+import { persistAtomEffect } from "./SSRStateAtom";
 
 export interface sessionAtom extends DocumentData {
   user: {
@@ -13,8 +13,7 @@ export interface sessionAtom extends DocumentData {
     updatedAt: Date;
     emailVerified: boolean;
     providerData: DocumentData[];
-    following?: DocumentData[];
-  };
+  } | null;
 }
 
 const defaultSessionState: sessionAtom = {
@@ -24,5 +23,5 @@ const defaultSessionState: sessionAtom = {
 export const sessionAtom = atom<sessionAtom>({
   key: "sessionAtom",
   default: defaultSessionState,
-  effects_UNSTABLE: [persistAtomEffect],
+  // effects_UNSTABLE: [persistAtomEffect],
 });

@@ -3,11 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "yarn --cwd ./Project/ run dev",
-    "build": "yarn --cwd ./Project/ run build",
-    "start": "yarn --cwd ./Project/ run start",
-    "lint": "yarn --cwd ./Project/ run lint",
-    "install": "yarn --cwd ./Project install"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.15",

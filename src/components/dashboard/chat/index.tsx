@@ -39,7 +39,8 @@ const Index = () => {
           justifyContent="center"
           gap={4}
           h={"100%"}
-          p={5}>
+          p={5}
+          >
           <Image
             src={logos.light}
             alt="SkyQuick Logo"

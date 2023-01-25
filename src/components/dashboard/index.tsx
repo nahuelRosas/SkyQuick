@@ -6,7 +6,11 @@ import Sidebar from "./sideBar";
 const Dashboard = () => {
   return (
     <Container maxW="100%" h="100vh" bg={"blackAlpha.900"}>
-      <Container maxW="95%" h="100vh" bg={"blackAlpha.100"} minH="100vh">
+      <Container
+        maxW={useBreakpointValue({ base: "100%", md: "95%", xl: "95%" })}
+        h="100vh"
+        bg={"blackAlpha.100"}
+        minH="100vh">
         <Grid
           templateColumns={useBreakpointValue({
             base: "1fr",

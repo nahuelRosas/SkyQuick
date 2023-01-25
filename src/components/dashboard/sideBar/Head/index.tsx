@@ -1,9 +1,10 @@
-import { Avatar, Flex } from "@chakra-ui/react";
-import React from "react";
+import { Flex } from '@chakra-ui/react';
+import React from 'react';
 
-import useRecoveryData from "../../../../hooks/useRecoveryData";
-import BlockIcons from "./blockIcons";
-import FriendRequest from "./friendsRequest";
+import useRecoveryData from '../../../../hooks/useRecoveryData';
+import BlockIcons from './blockIcons';
+import FriendRequest from './friendsRequest';
+import OwnProfile from './ownProfile';
 
 const index = () => {
   const { recoverData } = useRecoveryData();
@@ -15,11 +16,7 @@ const index = () => {
       justifyContent="space-between"
       gap={5}
       flexDir={"row"}>
-      <Avatar
-        borderRadius="full"
-        boxSize="3rem"
-        src={recoverData("UserPhoto") as string}
-      />
+      <OwnProfile />
       <Flex
         alignItems="center"
         justifyContent="space-between"

@@ -1,22 +1,14 @@
-import { useToast } from "@chakra-ui/react";
-import {
-  arrayUnion,
-  doc,
-  DocumentData,
-  serverTimestamp,
-  setDoc,
-  arrayRemove,
-  updateDoc,
-} from "firebase/firestore";
-import { nanoid } from "nanoid";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useRecoilValue } from "recoil";
+import { useToast } from '@chakra-ui/react';
+import { arrayRemove, arrayUnion, doc, DocumentData, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
+import { nanoid } from 'nanoid';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useRecoilValue } from 'recoil';
 
-import { principalChatAtom } from "../atoms/principalChatAtom";
-import { sessionAtom } from "../atoms/sessionAtom";
-import { auth, firestore } from "../firebase/clientApp";
-import { RecoverChats } from "./functions/recoverChats";
-import { RecoverUserData } from "./functions/recoverUserData";
+import { principalChatAtom } from '../atoms/principalChatAtom';
+import { sessionAtom } from '../atoms/sessionAtom';
+import { auth, firestore } from '../firebase/clientApp';
+import { RecoverChats } from './functions/recoverChats';
+import { RecoverUserData } from './functions/recoverUserData';
 
 const useRecoveryData = () => {
   const [AuthState] = useAuthState(auth);
@@ -30,7 +22,7 @@ const useRecoveryData = () => {
   };
 
   const recoverData = (
-    type: "UserPhoto" | "recivedRequestFriends" | "friends"
+    type: "UserPhoto" | "recivedRequestFriends" | "friends" | "userInformation"
   ) => {
     switch (type) {
       case "UserPhoto":
@@ -39,7 +31,8 @@ const useRecoveryData = () => {
         return user?.recivedRequestFriends || [];
       case "friends":
         return user?.friends || [];
-
+      case "userInformation":
+        return user;
       default:
         return undefined;
     }
@@ -270,6 +263,56 @@ const useRecoveryData = () => {
       });
   };
 
+  const updatePhotoURL = async (photoURL: string) => {
+    if (!AuthState) return;
+
+    await updateDoc(doc(firestore, "users", AuthState.uid), {
+      photoURL: photoURL,
+    })
+      .then(() => {
+        toast({
+          title: "Photo updated",
+          duration: 3000,
+          isClosable: true,
+          status: "success",
+        });
+      })
+      .catch((error: { message: string }) => {
+        toast({
+          title: "Error updating photo",
+          description: error.message,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      });
+  };
+
+  const updateAbout = async (about: string) => {
+    if (!AuthState) return;
+
+    await updateDoc(doc(firestore, "users", AuthState.uid), {
+      about: about,
+    })
+      .then(() => {
+        toast({
+          title: "About updated",
+          duration: 3000,
+          isClosable: true,
+          status: "success",
+        });
+      })
+      .catch((error: { message: string }) => {
+        toast({
+          title: "Error updating about",
+          description: error.message,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      });
+  };
+
   return {
     deleteRequest,
     acceptRequest,
@@ -280,6 +323,8 @@ const useRecoveryData = () => {
     sentMessage,
     checkIfItsMe,
     deleteFriend,
+    updatePhotoURL,
+    updateAbout,
   };
 };
 

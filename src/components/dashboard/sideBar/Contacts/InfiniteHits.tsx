@@ -9,6 +9,7 @@ const InfiniteHits = ({
   refinePrevious,
   hasMore,
   refineNext,
+  onCloseDrawer,
 }: {
   hits: {
     displayName: string;
@@ -21,9 +22,8 @@ const InfiniteHits = ({
   refinePrevious: () => void;
   hasMore: boolean;
   refineNext: () => void;
+  onCloseDrawer?: any;
 }) => {
-  console.log(hits);
-
   if (hits.length === 0)
     return (
       <Flex

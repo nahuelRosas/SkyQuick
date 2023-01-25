@@ -5,7 +5,6 @@ import {
   DrawerCloseButton,
   DrawerContent,
   DrawerOverlay,
-  Flex,
   IconButton,
   useBreakpointValue,
   useDisclosure,
@@ -15,9 +14,6 @@ import { HiOutlineMenu } from "react-icons/hi";
 
 import Contacts from "./Contacts";
 import Head from "./Head";
-import user from "./Head/friendsRequest/user";
-import EditAbout from "./Head/ownProfile/editAbout";
-import EditPhotoProfile from "./Head/ownProfile/editPhotoProfile";
 
 const Sidebar: React.FC = () => {
   const {
@@ -34,9 +30,18 @@ const Sidebar: React.FC = () => {
           colorScheme={"cyan"}
           position="fixed"
           transition="all 0.2s"
-          right={8}
+          right={10}
+          top={8}
           icon={<HiOutlineMenu />}
           fontSize="3xl"
+          _active={{
+            bg: "cyan.900",
+            color: "gray.200",
+          }}
+          _hover={{
+            bg: "cyan.900",
+            color: "gray.200",
+          }}
           onClick={() => {
             onOpenDrawer();
           }}
@@ -52,7 +57,7 @@ const Sidebar: React.FC = () => {
             <DrawerCloseButton color={"gray.200"} bg={"cyan.900"} />
             <DrawerBody bg={"blackAlpha.900"}>
               <Head />
-              <Contacts />
+              <Contacts onCloseDrawer={onCloseDrawer} />
             </DrawerBody>
           </DrawerContent>
         </Drawer>

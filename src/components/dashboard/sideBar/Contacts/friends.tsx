@@ -5,7 +5,7 @@ import React from "react";
 import useRecoveryData from "../../../../hooks/useRecoveryData";
 import ContactOnFriends from "./ContactOnFriends";
 
-const Friends = () => {
+const Friends = ({ onCloseDrawer }: { onCloseDrawer?: any }) => {
   const { recoverData } = useRecoveryData();
   const Friends = recoverData("friends") as DocumentData[];
   return (
@@ -20,7 +20,13 @@ const Friends = () => {
       overflow={"auto"}>
       {Friends?.map(
         (Friends: DocumentData, key: React.Key | null | undefined) => {
-          return <ContactOnFriends key={key} hit={Friends} />;
+          return (
+            <ContactOnFriends
+              key={key}
+              hit={Friends}
+              onCloseDrawer={onCloseDrawer}
+            />
+          );
         }
       )}
     </Flex>

@@ -14,7 +14,7 @@ const searchClient = algoliasearch(
   process.env.NEXT_PUBLIC_ALGOLIA_APPID as string,
   process.env.NEXT_PUBLIC_ALGOLIA_SEARCHKEY as string
 );
-const Contacts = () => {
+const Contacts = ({ onCloseDrawer }: { onCloseDrawer?: any }) => {
   const { query, state, loading } = useRecoilValue(searchQueryAtom);
   return (
     <Flex
@@ -28,7 +28,9 @@ const Contacts = () => {
         <SearchBox />
         {state && query.length > 0 && !loading && <InfiniteHits />}
         {loading && <Loading />}
-        {state && query.length === 0 && <Following />}
+        {state && query.length === 0 && (
+          <Following onCloseDrawer={onCloseDrawer} />
+        )}
       </InstantSearch>
     </Flex>
   );

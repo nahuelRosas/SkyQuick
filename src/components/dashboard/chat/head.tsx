@@ -125,7 +125,7 @@ const Head = () => {
                   borderColor: "red.900",
                 }}
                 onClick={() => onOpenAlertDialog()}>
-                Delete
+                Delete Friend
               </Button>
             </DrawerBody>
           </DrawerContent>
@@ -136,20 +136,20 @@ const Head = () => {
           leastDestructiveRef={React.useRef(null)}
           onClose={onCloseAlertDialog}>
           <AlertDialogOverlay>
-            <AlertDialogContent>
-              <AlertDialogHeader
-                fontSize="lg"
-                fontWeight="bold"
-                bg={"blackAlpha.900"}
-                color={"gray.200"}>
+            <AlertDialogContent
+              m={4}
+              borderRadius="lg"
+              bg={"gray.900"}
+              color={"gray.200"}>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
                 Delete Friend
               </AlertDialogHeader>
 
-              <AlertDialogBody bg={"blackAlpha.900"} color={"gray.200"}>
+              <AlertDialogBody>
                 Are you sure? You can't undo this action afterwards.
               </AlertDialogBody>
 
-              <AlertDialogFooter bg={"blackAlpha.900"} color={"gray.200"}>
+              <AlertDialogFooter>
                 <Button
                   ref={React.useRef(null)}
                   onClick={onCloseAlertDialog}

@@ -4,7 +4,13 @@ import { useSetRecoilState } from "recoil";
 
 import { principalChatAtom } from "../../../../atoms/principalChatAtom";
 
-const ContactOnFollowing = ({ hit }: { hit: DocumentData }) => {
+const ContactOnFollowing = ({
+  hit,
+  onCloseDrawer,
+}: {
+  hit: DocumentData;
+  onCloseDrawer?: any;
+}) => {
   const setChat = useSetRecoilState(principalChatAtom);
 
   return (
@@ -29,15 +35,16 @@ const ContactOnFollowing = ({ hit }: { hit: DocumentData }) => {
         bg={"transpatent"}
         gap={5}
         overflow={"hidden"}
-        onClick={() =>
+        onClick={() => {
           setChat({
             uid: hit.uid,
             displayName: hit.displayName,
             email: hit.email,
             photoURL: hit.photoURL,
             about: hit.about,
-          })
-        }>
+          });
+          if (onCloseDrawer) onCloseDrawer();
+        }}>
         <Avatar
           left={0}
           h={"auto"}

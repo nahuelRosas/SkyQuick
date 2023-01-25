@@ -39,8 +39,7 @@ const Index = () => {
           justifyContent="center"
           gap={4}
           h={"100%"}
-          p={5}
-          >
+          p={5}>
           <Image
             src={logos.light}
             alt="SkyQuick Logo"
@@ -112,7 +111,7 @@ const Index = () => {
               About
             </Text>
             <Text fontSize={"lg"} fontWeight={"light"} color={"gray.200"}>
-            {about ? about : "This user has not yet added an about."}
+              {about ? about : "This user has not yet added an about."}
             </Text>
           </Flex>
           <Center>

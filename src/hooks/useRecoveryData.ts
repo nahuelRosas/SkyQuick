@@ -73,6 +73,11 @@ const useRecoveryData = () => {
     about: string;
   }) => {
     if (!AuthState) return;
+    console.log(User.uid);
+    console.log(User.displayName);
+    console.log(User.email);
+    console.log(User.photoURL);
+    console.log(User.about);
 
     setLoadingRequestFriends(true);
     await updateDoc(doc(firestore, "users", AuthState.uid), {

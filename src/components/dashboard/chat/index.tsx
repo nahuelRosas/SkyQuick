@@ -111,7 +111,7 @@ const Index = () => {
               About
             </Text>
             <Text fontSize={"lg"} fontWeight={"light"} color={"gray.200"}>
-              {about}
+            {about ? about : "This user has not yet added an about."}
             </Text>
           </Flex>
           <Center>

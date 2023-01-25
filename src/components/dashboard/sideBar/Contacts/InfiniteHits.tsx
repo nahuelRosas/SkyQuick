@@ -22,6 +22,8 @@ const InfiniteHits = ({
   hasMore: boolean;
   refineNext: () => void;
 }) => {
+  console.log(hits);
+
   if (hits.length === 0)
     return (
       <Flex

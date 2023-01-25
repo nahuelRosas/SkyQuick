@@ -1,13 +1,18 @@
-import { Flex, IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
-import React from 'react';
-import { useSignOut } from 'react-firebase-hooks/auth';
-import { HiOutlineDotsVertical } from 'react-icons/hi';
+import {
+  Flex,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+} from "@chakra-ui/react";
+import React from "react";
+import { useSignOut } from "react-firebase-hooks/auth";
+import { HiOutlineDotsVertical } from "react-icons/hi";
 
-import { auth } from '../../../../firebase/clientApp';
+import { auth } from "../../../../firebase/clientApp";
 
-type blockIconsProps = {};
-
-const BlockIcons: React.FC<blockIconsProps> = () => {
+const BlockIcons = () => {
   const [signOut] = useSignOut(auth);
   return (
     <Flex

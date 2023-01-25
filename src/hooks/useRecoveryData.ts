@@ -9,9 +9,9 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { nanoid } from "nanoid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 import { principalChatAtom } from "../atoms/principalChatAtom";
 import { sessionAtom } from "../atoms/sessionAtom";
@@ -23,12 +23,14 @@ const useRecoveryData = () => {
   const [AuthState] = useAuthState(auth);
   const toast = useToast();
   const { user } = useRecoilValue(sessionAtom);
-  const userChat = useRecoilValue(principalChatAtom);
+  const [userChat, setUserChat] = useRecoilState(principalChatAtom);
 
   const RootRecovery = () => {
     RecoverUserData(AuthState);
     RecoverChats(AuthState);
   };
+
+  useEffect(() => {}, [user?.friends]);
 
   const recoverData = (
     type: "UserPhoto" | "recivedRequestFriends" | "friends" | "userInformation"
@@ -73,11 +75,6 @@ const useRecoveryData = () => {
     about: string;
   }) => {
     if (!AuthState) return;
-    console.log(User.uid);
-    console.log(User.displayName);
-    console.log(User.email);
-    console.log(User.photoURL);
-    console.log(User.about);
 
     setLoadingRequestFriends(true);
     await updateDoc(doc(firestore, "users", AuthState.uid), {

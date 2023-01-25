@@ -1,8 +1,8 @@
-import { Flex, IconButton, Input } from '@chakra-ui/react';
-import React, { useState } from 'react';
-import { HiOutlineArrowRightCircle, HiOutlineFaceSmile } from 'react-icons/hi2';
+import { Flex, IconButton, Input } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { HiOutlineArrowRightCircle, HiOutlineFaceSmile } from "react-icons/hi2";
 
-import useRecoveryData from '../../../hooks/useRecoveryData';
+import useRecoveryData from "../../../hooks/useRecoveryData";
 
 const Footer = () => {
   const [input, setInput] = useState("");
@@ -34,17 +34,6 @@ const Footer = () => {
             }
           : () => {}
       }>
-      <IconButton
-        aria-label="Icons"
-        colorScheme={"cyan"}
-        icon={<HiOutlineFaceSmile />}
-        fontSize="3xl"
-        variant="ghost"
-        isRound
-        _hover={{ bg: "transparent" }}
-        _active={{ bg: "transparent" }}
-      />
-
       <Input
         placeholder="Type a message"
         variant="filled"

@@ -1,14 +1,23 @@
-import { useToast } from '@chakra-ui/react';
-import { arrayRemove, arrayUnion, doc, DocumentData, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
-import { nanoid } from 'nanoid';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { useRecoilValue } from 'recoil';
+import { useToast } from "@chakra-ui/react";
+import {
+  arrayRemove,
+  arrayUnion,
+  doc,
+  DocumentData,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
+import { nanoid } from "nanoid";
+import { useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useRecoilValue } from "recoil";
 
-import { principalChatAtom } from '../atoms/principalChatAtom';
-import { sessionAtom } from '../atoms/sessionAtom';
-import { auth, firestore } from '../firebase/clientApp';
-import { RecoverChats } from './functions/recoverChats';
-import { RecoverUserData } from './functions/recoverUserData';
+import { principalChatAtom } from "../atoms/principalChatAtom";
+import { sessionAtom } from "../atoms/sessionAtom";
+import { auth, firestore } from "../firebase/clientApp";
+import { RecoverChats } from "./functions/recoverChats";
+import { RecoverUserData } from "./functions/recoverUserData";
 
 const useRecoveryData = () => {
   const [AuthState] = useAuthState(auth);
@@ -46,7 +55,17 @@ const useRecoveryData = () => {
     return false;
   };
 
-  const sendRequestFollow = async (User: {
+  const sentRequestFriendsValidate = async (uid: string) => {
+    if (!user || !user.sentRequestFriends) return false;
+    if (user.sentRequestFriends.findIndex((user) => user.uid === uid) !== -1) {
+      return true;
+    }
+    return false;
+  };
+
+  const [loadingRequestFriends, setLoadingRequestFriends] = useState(false);
+
+  const sendRequestFriends = async (User: {
     uid: string;
     displayName: string;
     email: string;
@@ -55,6 +74,7 @@ const useRecoveryData = () => {
   }) => {
     if (!AuthState) return;
 
+    setLoadingRequestFriends(true);
     await updateDoc(doc(firestore, "users", AuthState.uid), {
       sentRequestFriends: arrayUnion({
         uid: User.uid,
@@ -92,6 +112,61 @@ const useRecoveryData = () => {
           duration: 3000,
           isClosable: true,
         });
+      })
+      .finally(() => {
+        setLoadingRequestFriends(false);
+      });
+  };
+
+  const cancelRequestFriends = async (User: {
+    uid: string;
+    displayName: string;
+    email: string;
+    photoURL: string;
+    about: string;
+  }) => {
+    if (!AuthState) return;
+    setLoadingRequestFriends(true);
+
+    await updateDoc(doc(firestore, "users", AuthState.uid), {
+      sentRequestFriends: arrayRemove({
+        uid: User.uid,
+        displayName: User.displayName,
+        email: User.email,
+        photoURL: User.photoURL,
+        about: User.about,
+      }),
+    })
+      .then(async () => {
+        await updateDoc(doc(firestore, "users", User.uid), {
+          recivedRequestFriends: arrayRemove({
+            uid: AuthState.uid,
+            displayName: AuthState.displayName,
+            email: AuthState.email,
+            photoURL: user?.photoURL,
+            about: user?.about,
+          }),
+        }).then(() => {
+          toast({
+            title: "Request canceled",
+            description: "You have canceled the request",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        });
+      })
+      .catch((error: { message: string }) => {
+        toast({
+          title: "Error canceling request",
+          description: error.message,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .finally(() => {
+        setLoadingRequestFriends(false);
       });
   };
 
@@ -319,7 +394,12 @@ const useRecoveryData = () => {
     RootRecovery,
     recoverData,
     friendsValidate,
-    sendRequestFollow,
+    friends: {
+      sendRequestFriends,
+      loadingRequestFriends,
+      sentRequestFriendsValidate,
+      cancelRequestFriends,
+    },
     sentMessage,
     checkIfItsMe,
     deleteFriend,

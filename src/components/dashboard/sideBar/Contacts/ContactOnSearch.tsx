@@ -1,7 +1,15 @@
-import { Avatar, Flex, Grid, IconButton, Text } from "@chakra-ui/react";
+import {
+  Avatar,
+  Button,
+  Center,
+  Flex,
+  Grid,
+  IconButton,
+  Text,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { HiUser, HiUserAdd } from "react-icons/hi";
-import { useSetRecoilState } from "recoil";
+import { HiUser, HiUserAdd, HiUserRemove } from "react-icons/hi";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import { principalChatAtom } from "../../../../atoms/principalChatAtom";
 import useRecoveryData from "../../../../hooks/useRecoveryData";
@@ -17,17 +25,27 @@ const ContactOnSearch = ({
     about: string;
   };
 }) => {
-  const { friendsValidate, sendRequestFollow, checkIfItsMe } =
-    useRecoveryData();
-
-  if (checkIfItsMe(hit.uid)) return <></>;
-
   const setChat = useSetRecoilState(principalChatAtom);
-  const [isfriends, setIsfriends] = useState(false);
+  const [isFriend, setIsFriend] = useState(false);
+  const [sentRequestFriends, setSentRequestFriends] = useState(false);
+  const { friendsValidate, friends, checkIfItsMe } = useRecoveryData();
+
+  const {
+    loadingRequestFriends,
+    sendRequestFriends,
+    sentRequestFriendsValidate,
+    cancelRequestFriends,
+  } = friends;
 
   useEffect(() => {
-    friendsValidate(hit.uid).then((res) => setIsfriends(res));
-  }, [friendsValidate, hit.uid]);
+    friendsValidate(hit.uid).then((res) => setIsFriend(res));
+    sentRequestFriendsValidate(hit.uid).then((res) =>
+      setSentRequestFriends(res)
+    );
+  }, [friendsValidate, hit.uid, sentRequestFriendsValidate]);
+
+  const isMe = checkIfItsMe(hit.uid);
+  if (isMe) return null;
 
   return (
     <Grid
@@ -95,30 +113,90 @@ const ContactOnSearch = ({
           </Text>
         </Flex>
       </Flex>
-      <Flex
-        alignItems="center"
-        justifyContent="center"
-        flexDir={"column"}
-        right={0}
-        h={"auto"}>
+      <Center>
         <IconButton
-          aria-label="Call Segun"
-          size="sm"
-          fontSize={"2xl"}
-          icon={!isfriends ? <HiUserAdd /> : <HiUser />}
+          alignSelf="flex-end"
           colorScheme="cyan"
-          variant={isfriends ? "solid" : "outline"}
+          display={sentRequestFriends || isFriend ? "none" : "inline-flex"}
+          variant={"outline"}
+          isLoading={loadingRequestFriends}
+          w={"100%"}
           onClick={() => {
-            if (!isfriends) {
-              sendRequestFollow(hit);
+            if (!isFriend) {
+              sendRequestFriends({
+                displayName: hit.displayName,
+                email: hit.email,
+                photoURL: hit.photoURL,
+                uid: hit.uid,
+                about: hit.about,
+              });
               return;
             }
           }}
-          _hover={{ bg: "cyan.500", color: "black" }}
-          _active={{ bg: "cyan.500", color: "black" }}
-          _focus={{ bg: "cyan.500", color: "black" }}
+          _hover={{
+            bg: "cyan.900",
+            color: "gray.200",
+            borderColor: "cyan.900",
+          }}
+          aria-label={"Add Friend"}
+          icon={<HiUserAdd />}
+          fontSize={"2xl"}
         />
-      </Flex>
+        <IconButton
+          alignSelf="flex-end"
+          colorScheme="red"
+          aria-label="Remove Friend"
+          display={sentRequestFriends && !isFriend ? "inline-flex" : "none"}
+          variant={"outline"}
+          isLoading={loadingRequestFriends}
+          w={"100%"}
+          onClick={() => {
+            if (!isFriend) {
+              cancelRequestFriends({
+                displayName: hit.displayName,
+                email: hit.email,
+                photoURL: hit.photoURL,
+                uid: hit.uid,
+                about: hit.about,
+              });
+              return;
+            }
+          }}
+          _hover={{
+            bg: "red.900",
+            color: "gray.200",
+            borderColor: "red.900",
+          }}
+          _active={{
+            bg: "red.900",
+            color: "gray.200",
+            borderColor: "red.900",
+          }}
+          icon={<HiUserRemove />}
+          fontSize={"2xl"}
+        />
+        <IconButton
+          alignSelf="flex-end"
+          colorScheme="green"
+          aria-label="isFriend"
+          display={isFriend ? "inline-flex" : "none"}
+          variant={"solid"}
+          isLoading={loadingRequestFriends}
+          w={"100%"}
+          _hover={{
+            bg: "green.900",
+            color: "gray.200",
+            borderColor: "green.900",
+          }}
+          _active={{
+            bg: "green.900",
+            color: "gray.200",
+            borderColor: "green.900",
+          }}
+          icon={<HiUser />}
+          fontSize={"2xl"}
+        />
+      </Center>
     </Grid>
   );
 };
